@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_test_runners/flutter_test_runners.dart';
 import 'package:super_editor/src/infrastructure/platforms/ios/selection_handles.dart';
@@ -19,7 +18,8 @@ void main() {
               // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod...",
               .withSingleParagraph()
               .withiOSToolbarBuilder((context, mobileToolbarKey, focalPoint) =>
-                  IOSTextEditingFloatingToolbar(key: mobileToolbarKey, focalPoint: focalPoint))
+                  IOSTextEditingFloatingToolbar(
+                      key: mobileToolbarKey, focalPoint: focalPoint))
               .pump();
 
           // Ensure that no overlay controls are visible.
@@ -59,7 +59,8 @@ void main() {
               // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod...",
               .withSingleParagraph()
               .withiOSToolbarBuilder((context, mobileToolbarKey, focalPoint) =>
-                  IOSTextEditingFloatingToolbar(key: mobileToolbarKey, focalPoint: focalPoint))
+                  IOSTextEditingFloatingToolbar(
+                      key: mobileToolbarKey, focalPoint: focalPoint))
               .pump();
 
           // Long press on the middle of "do|lor".
@@ -96,13 +97,16 @@ void main() {
           expect(SuperReaderInspector.findDocumentSelection(), wordSelection);
         });
 
-        testWidgetsOnIos("selects by word when dragging upstream and then back downstream", (tester) async {
+        testWidgetsOnIos(
+            "selects by word when dragging upstream and then back downstream",
+            (tester) async {
           await tester
               .createDocument()
               // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod...",
               .withSingleParagraph()
               .withiOSToolbarBuilder((context, mobileToolbarKey, focalPoint) =>
-                  IOSTextEditingFloatingToolbar(key: mobileToolbarKey, focalPoint: focalPoint))
+                  IOSTextEditingFloatingToolbar(
+                      key: mobileToolbarKey, focalPoint: focalPoint))
               .pump();
 
           // Long press on the middle of "do|lor".
@@ -124,7 +128,8 @@ void main() {
 
           // Ensure the drag handles and magnifier are visible, but the toolbar isn't.
           expect(find.byType(IOSSelectionHandle), findsNWidgets(2));
-          expect(find.byType(IOSRoundedRectangleMagnifyingGlass), findsOneWidget);
+          expect(
+              find.byType(IOSRoundedRectangleMagnifyingGlass), findsOneWidget);
           expect(find.byType(IOSTextEditingFloatingToolbar), findsNothing);
 
           // Drag upstream to the end of the previous word.
@@ -172,13 +177,16 @@ void main() {
           gesture.up();
         });
 
-        testWidgetsOnIos("selects by word when dragging downstream and then back upstream", (tester) async {
+        testWidgetsOnIos(
+            "selects by word when dragging downstream and then back upstream",
+            (tester) async {
           await tester
               .createDocument()
               // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod...",
               .withSingleParagraph()
               .withiOSToolbarBuilder((context, mobileToolbarKey, focalPoint) =>
-                  IOSTextEditingFloatingToolbar(key: mobileToolbarKey, focalPoint: focalPoint))
+                  IOSTextEditingFloatingToolbar(
+                      key: mobileToolbarKey, focalPoint: focalPoint))
               .pump();
 
           // Long press on the middle of "do|lor".
@@ -200,7 +208,8 @@ void main() {
 
           // Ensure the drag handles and magnifier are visible, but the toolbar isn't.
           expect(find.byType(IOSSelectionHandle), findsNWidgets(2));
-          expect(find.byType(IOSRoundedRectangleMagnifyingGlass), findsOneWidget);
+          expect(
+              find.byType(IOSRoundedRectangleMagnifyingGlass), findsOneWidget);
           expect(find.byType(IOSTextEditingFloatingToolbar), findsNothing);
 
           // Drag downstream to the beginning of the next word.
@@ -251,7 +260,8 @@ void main() {
     });
 
     group('within ancestor scrollable', () {
-      testWidgetsOnIos("expands selection when dragging horizontally", (tester) async {
+      testWidgetsOnIos("expands selection when dragging horizontally",
+          (tester) async {
         final testContext = await tester
             .createDocument()
             .fromMarkdown(
@@ -266,7 +276,8 @@ multiple lines.''',
         final paragraphNode = testContext.document.nodes.first as ParagraphNode;
 
         // Double tap to select "SuperEditor".
-        await SuperReaderRobot(tester).doubleTapInParagraph(paragraphNode.id, 0);
+        await SuperReaderRobot(tester)
+            .doubleTapInParagraph(paragraphNode.id, 0);
 
         // Drag from "SuperEdito|r" a distance long enough to go through the entire first line.
         await SuperReaderRobot(tester).dragSelectDocumentFromPositionByOffset(
@@ -295,7 +306,8 @@ multiple lines.''',
         );
       });
 
-      testWidgetsOnIos("expands selection when dragging vertically", (tester) async {
+      testWidgetsOnIos("expands selection when dragging vertically",
+          (tester) async {
         final testContext = await tester
             .createDocument()
             .fromMarkdown(
@@ -310,7 +322,8 @@ multiple lines.''',
         final paragraphNode = testContext.document.nodes.first as ParagraphNode;
 
         // Double tap to select "SuperEditor".
-        await SuperReaderRobot(tester).doubleTapInParagraph(paragraphNode.id, 0);
+        await SuperReaderRobot(tester)
+            .doubleTapInParagraph(paragraphNode.id, 0);
 
         // Drag from "SuperEdito|r" a distance long enough to go to the last line.
         await SuperReaderRobot(tester).dragSelectDocumentFromPositionByOffset(

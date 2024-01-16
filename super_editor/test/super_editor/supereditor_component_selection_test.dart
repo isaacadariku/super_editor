@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,7 +22,9 @@ import 'test_documents.dart';
 /// the HR isn't there.
 void main() {
   group("Selectable component", () {
-    testWidgetsOnDesktop("accepts selection when caret moves down from upstream node", (tester) async {
+    testWidgetsOnDesktop(
+        "accepts selection when caret moves down from upstream node",
+        (tester) async {
       await _pumpEditorWithSelectableHrs(tester);
       await tester.placeCaretInParagraph("1", 37);
 
@@ -41,7 +42,9 @@ void main() {
       );
     });
 
-    testWidgetsOnDesktop("accepts selection when selection expands down from upstream node", (tester) async {
+    testWidgetsOnDesktop(
+        "accepts selection when selection expands down from upstream node",
+        (tester) async {
       await _pumpEditorWithSelectableHrs(tester);
       await tester.placeCaretInParagraph("1", 37);
 
@@ -55,7 +58,8 @@ void main() {
         const DocumentSelection(
           base: DocumentPosition(
             nodeId: "1",
-            nodePosition: TextNodePosition(offset: 37, affinity: TextAffinity.upstream),
+            nodePosition:
+                TextNodePosition(offset: 37, affinity: TextAffinity.upstream),
           ),
           extent: DocumentPosition(
             nodeId: "2",
@@ -65,7 +69,9 @@ void main() {
       );
     });
 
-    testWidgetsOnDesktop("accepts selection when caret moves up from downstream node", (tester) async {
+    testWidgetsOnDesktop(
+        "accepts selection when caret moves up from downstream node",
+        (tester) async {
       await _pumpEditorWithSelectableHrs(tester);
       await tester.placeCaretInParagraph("3", 0);
 
@@ -83,7 +89,9 @@ void main() {
       );
     });
 
-    testWidgetsOnDesktop("accepts selection when selection expands up from downstream node", (tester) async {
+    testWidgetsOnDesktop(
+        "accepts selection when selection expands up from downstream node",
+        (tester) async {
       await _pumpEditorWithSelectableHrs(tester);
       await tester.placeCaretInParagraph("3", 0);
 
@@ -107,7 +115,8 @@ void main() {
       );
     });
 
-    testWidgetsOnAllPlatforms("accepts selection when user taps on it", (tester) async {
+    testWidgetsOnAllPlatforms("accepts selection when user taps on it",
+        (tester) async {
       await _pumpEditorWithSelectableHrs(tester);
 
       await tester.tapAtDocumentPosition(
@@ -129,7 +138,9 @@ void main() {
       );
     });
 
-    testWidgetsOnDesktop("moves selection to next node when delete pressed from upstream", (tester) async {
+    testWidgetsOnDesktop(
+        "moves selection to next node when delete pressed from upstream",
+        (tester) async {
       await _pumpEditorWithSelectableHrs(tester);
       await tester.placeCaretInParagraph("1", 37);
 
@@ -147,7 +158,9 @@ void main() {
       );
     });
 
-    testWidgetsOnDesktop("moves selection to previous node when backspace pressed from downstream", (tester) async {
+    testWidgetsOnDesktop(
+        "moves selection to previous node when backspace pressed from downstream",
+        (tester) async {
       await _pumpEditorWithSelectableHrs(tester);
       await tester.placeCaretInParagraph("3", 0);
 
@@ -167,7 +180,9 @@ void main() {
   });
 
   group("Unselectable component", () {
-    testWidgetsOnDesktop("skips node when down arrow moves caret down from upstream node", (tester) async {
+    testWidgetsOnDesktop(
+        "skips node when down arrow moves caret down from upstream node",
+        (tester) async {
       await _pumpEditorWithUnselectableHrs(tester);
       await tester.placeCaretInParagraph("1", 37);
 
@@ -179,13 +194,16 @@ void main() {
         const DocumentSelection.collapsed(
           position: DocumentPosition(
             nodeId: "3",
-            nodePosition: TextNodePosition(offset: 37, affinity: TextAffinity.upstream),
+            nodePosition:
+                TextNodePosition(offset: 37, affinity: TextAffinity.upstream),
           ),
         ),
       );
     });
 
-    testWidgetsOnDesktop("skips node when right arrow moves caret down from upstream node", (tester) async {
+    testWidgetsOnDesktop(
+        "skips node when right arrow moves caret down from upstream node",
+        (tester) async {
       await _pumpEditorWithUnselectableHrs(tester);
       await tester.placeCaretInParagraph("1", 37);
 
@@ -195,13 +213,17 @@ void main() {
       expect(
         SuperEditorInspector.findDocumentSelection(),
         const DocumentSelection.collapsed(
-          position: DocumentPosition(nodeId: "3", nodePosition: TextNodePosition(offset: 0)),
+          position: DocumentPosition(
+              nodeId: "3", nodePosition: TextNodePosition(offset: 0)),
         ),
       );
     });
 
-    testWidgetsOnDesktop("rejects selection when down arrow moves caret down from upstream node", (tester) async {
-      await _pumpEditorWithUnselectableHrs(tester, customDocument: paragraphThenHrDoc());
+    testWidgetsOnDesktop(
+        "rejects selection when down arrow moves caret down from upstream node",
+        (tester) async {
+      await _pumpEditorWithUnselectableHrs(tester,
+          customDocument: paragraphThenHrDoc());
       await tester.placeCaretInParagraph("1", 11);
 
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
@@ -210,13 +232,17 @@ void main() {
       expect(
         SuperEditorInspector.findDocumentSelection(),
         const DocumentSelection.collapsed(
-          position: DocumentPosition(nodeId: "1", nodePosition: TextNodePosition(offset: 11)),
+          position: DocumentPosition(
+              nodeId: "1", nodePosition: TextNodePosition(offset: 11)),
         ),
       );
     });
 
-    testWidgetsOnDesktop("rejects selection when right arrow moves caret down from upstream node", (tester) async {
-      await _pumpEditorWithUnselectableHrs(tester, customDocument: paragraphThenHrDoc());
+    testWidgetsOnDesktop(
+        "rejects selection when right arrow moves caret down from upstream node",
+        (tester) async {
+      await _pumpEditorWithUnselectableHrs(tester,
+          customDocument: paragraphThenHrDoc());
       await tester.placeCaretInParagraph("1", 11);
 
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
@@ -227,13 +253,16 @@ void main() {
         const DocumentSelection.collapsed(
           position: DocumentPosition(
             nodeId: "1",
-            nodePosition: TextNodePosition(offset: 11, affinity: TextAffinity.upstream),
+            nodePosition:
+                TextNodePosition(offset: 11, affinity: TextAffinity.upstream),
           ),
         ),
       );
     });
 
-    testWidgetsOnDesktop("skips node when up arrow moves caret up from downstream node", (tester) async {
+    testWidgetsOnDesktop(
+        "skips node when up arrow moves caret up from downstream node",
+        (tester) async {
       await _pumpEditorWithUnselectableHrs(tester);
       await tester.placeCaretInParagraph("3", 37);
 
@@ -245,13 +274,16 @@ void main() {
         const DocumentSelection.collapsed(
           position: DocumentPosition(
             nodeId: "1",
-            nodePosition: TextNodePosition(offset: 37, affinity: TextAffinity.upstream),
+            nodePosition:
+                TextNodePosition(offset: 37, affinity: TextAffinity.upstream),
           ),
         ),
       );
     });
 
-    testWidgetsOnDesktop("skips node when left arrow moves caret up from downstream node", (tester) async {
+    testWidgetsOnDesktop(
+        "skips node when left arrow moves caret up from downstream node",
+        (tester) async {
       await _pumpEditorWithUnselectableHrs(tester);
       await tester.placeCaretInParagraph("3", 0);
 
@@ -261,13 +293,17 @@ void main() {
       expect(
         SuperEditorInspector.findDocumentSelection(),
         const DocumentSelection.collapsed(
-          position: DocumentPosition(nodeId: "1", nodePosition: TextNodePosition(offset: 37)),
+          position: DocumentPosition(
+              nodeId: "1", nodePosition: TextNodePosition(offset: 37)),
         ),
       );
     });
 
-    testWidgetsOnDesktop("rejects selection when up arrow moves caret up from downstream node", (tester) async {
-      await _pumpEditorWithUnselectableHrs(tester, customDocument: hrThenParagraphDoc());
+    testWidgetsOnDesktop(
+        "rejects selection when up arrow moves caret up from downstream node",
+        (tester) async {
+      await _pumpEditorWithUnselectableHrs(tester,
+          customDocument: hrThenParagraphDoc());
       await tester.placeCaretInParagraph("2", 11);
 
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
@@ -276,13 +312,17 @@ void main() {
       expect(
         SuperEditorInspector.findDocumentSelection(),
         const DocumentSelection.collapsed(
-          position: DocumentPosition(nodeId: "2", nodePosition: TextNodePosition(offset: 0)),
+          position: DocumentPosition(
+              nodeId: "2", nodePosition: TextNodePosition(offset: 0)),
         ),
       );
     });
 
-    testWidgetsOnDesktop("rejects selection when left arrow moves caret up from downstream node", (tester) async {
-      await _pumpEditorWithUnselectableHrs(tester, customDocument: hrThenParagraphDoc());
+    testWidgetsOnDesktop(
+        "rejects selection when left arrow moves caret up from downstream node",
+        (tester) async {
+      await _pumpEditorWithUnselectableHrs(tester,
+          customDocument: hrThenParagraphDoc());
       await tester.placeCaretInParagraph("2", 0);
 
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
@@ -291,12 +331,15 @@ void main() {
       expect(
         SuperEditorInspector.findDocumentSelection(),
         const DocumentSelection.collapsed(
-          position: DocumentPosition(nodeId: "2", nodePosition: TextNodePosition(offset: 0)),
+          position: DocumentPosition(
+              nodeId: "2", nodePosition: TextNodePosition(offset: 0)),
         ),
       );
     });
 
-    testWidgetsOnDesktop("deletes downstream node when delete pressed from upstream", (tester) async {
+    testWidgetsOnDesktop(
+        "deletes downstream node when delete pressed from upstream",
+        (tester) async {
       await _pumpEditorWithUnselectableHrs(tester);
       await tester.placeCaretInParagraph("1", 37);
 
@@ -308,7 +351,8 @@ void main() {
         const DocumentSelection.collapsed(
           position: DocumentPosition(
             nodeId: "1",
-            nodePosition: TextNodePosition(offset: 37, affinity: TextAffinity.upstream),
+            nodePosition:
+                TextNodePosition(offset: 37, affinity: TextAffinity.upstream),
           ),
         ),
       );
@@ -321,7 +365,9 @@ void main() {
       );
     });
 
-    testWidgetsOnDesktop("deletes upstream node when backspace pressed from downstream", (tester) async {
+    testWidgetsOnDesktop(
+        "deletes upstream node when backspace pressed from downstream",
+        (tester) async {
       await _pumpEditorWithUnselectableHrs(tester);
       await tester.placeCaretInParagraph("3", 0);
 
@@ -346,7 +392,8 @@ void main() {
       );
     });
 
-    testWidgetsOnAllPlatforms("rejects selection when user taps on it and it's the only node in document",
+    testWidgetsOnAllPlatforms(
+        "rejects selection when user taps on it and it's the only node in document",
         (tester) async {
       await _pumpEditorWithUnselectableHrs(
         tester,
@@ -362,7 +409,8 @@ void main() {
       expect(SuperEditorInspector.findDocumentSelection(), isNull);
     });
 
-    testWidgetsOnAllPlatforms("selects nearest selectable node when user taps on it", (tester) async {
+    testWidgetsOnAllPlatforms(
+        "selects nearest selectable node when user taps on it", (tester) async {
       await _pumpEditorWithUnselectableHrs(tester);
 
       await tester.tapAtDocumentPosition(const DocumentPosition(
@@ -382,7 +430,9 @@ void main() {
       );
     });
 
-    testWidgetsOnAllPlatforms("selects nearest selectable node when user double taps on it", (tester) async {
+    testWidgetsOnAllPlatforms(
+        "selects nearest selectable node when user double taps on it",
+        (tester) async {
       await _pumpEditorWithUnselectableHrs(tester);
 
       // Double tap the hr.
@@ -407,7 +457,9 @@ void main() {
       );
     });
 
-    testWidgetsOnAllPlatforms("selects nearest selectable node when user triple taps on it", (tester) async {
+    testWidgetsOnAllPlatforms(
+        "selects nearest selectable node when user triple taps on it",
+        (tester) async {
       await _pumpEditorWithUnselectableHrs(tester);
 
       // Triple tap the hr.
@@ -463,7 +515,8 @@ void main() {
       expect(find.byKey(toolbarKey), findsNothing);
     });
 
-    testWidgetsOnMobile("closes toolbar when user double taps on it", (tester) async {
+    testWidgetsOnMobile("closes toolbar when user double taps on it",
+        (tester) async {
       final toolbarKey = GlobalKey();
 
       await _pumpEditorWithUnselectableHrsAndFakeToolbar(
@@ -493,7 +546,8 @@ void main() {
       expect(find.byKey(toolbarKey), findsNothing);
     });
 
-    testWidgetsOnMobile("closes toolbar when user triple taps on it", (tester) async {
+    testWidgetsOnMobile("closes toolbar when user triple taps on it",
+        (tester) async {
       final toolbarKey = GlobalKey();
 
       await _pumpEditorWithUnselectableHrsAndFakeToolbar(
@@ -527,12 +581,13 @@ void main() {
   });
 }
 
-Future<TestDocumentContext> _pumpEditorWithSelectableHrs(WidgetTester tester) => tester //
-    .createDocument() //
-    .withCustomContent(paragraphThenHrThenParagraphDoc()) //
-    .forDesktop() //
-    .useStylesheet(_testStylesheet)
-    .pump();
+Future<TestDocumentContext> _pumpEditorWithSelectableHrs(WidgetTester tester) =>
+    tester //
+        .createDocument() //
+        .withCustomContent(paragraphThenHrThenParagraphDoc()) //
+        .forDesktop() //
+        .useStylesheet(_testStylesheet)
+        .pump();
 
 Future<TestDocumentContext> _pumpEditorWithUnselectableHrs(
   WidgetTester tester, {
@@ -540,7 +595,8 @@ Future<TestDocumentContext> _pumpEditorWithUnselectableHrs(
 }) =>
     tester //
         .createDocument() //
-        .withCustomContent(customDocument ?? paragraphThenHrThenParagraphDoc()) //
+        .withCustomContent(
+            customDocument ?? paragraphThenHrThenParagraphDoc()) //
         .useStylesheet(_testStylesheet)
         .withAddedComponents([const _UnselectableHrComponentBuilder()]) //
         .pump();
@@ -556,8 +612,10 @@ Future<void> _pumpEditorWithUnselectableHrsAndFakeToolbar(
         _UnselectableHrComponentBuilder(),
         ...defaultComponentBuilders,
       ])
-      .withAndroidToolbarBuilder((context, mobileToolbarKey, focalPoint) => SizedBox(key: toolbarKey))
-      .withiOSToolbarBuilder((context, mobileToolbarKey, focalPoint) => SizedBox(key: toolbarKey))
+      .withAndroidToolbarBuilder(
+          (context, mobileToolbarKey, focalPoint) => SizedBox(key: toolbarKey))
+      .withiOSToolbarBuilder(
+          (context, mobileToolbarKey, focalPoint) => SizedBox(key: toolbarKey))
       .pump();
 }
 
@@ -567,15 +625,16 @@ class _UnselectableHrComponentBuilder implements ComponentBuilder {
   const _UnselectableHrComponentBuilder();
 
   @override
-  SingleColumnLayoutComponentViewModel? createViewModel(Document document, DocumentNode node) {
+  SingleColumnLayoutComponentViewModel? createViewModel(
+      Document document, DocumentNode node) {
     // This builder can work with the standard horizontal rule view model, so
     // we'll defer to the standard horizontal rule builder.
     return null;
   }
 
   @override
-  Widget? createComponent(
-      SingleColumnDocumentComponentContext componentContext, SingleColumnLayoutComponentViewModel componentViewModel) {
+  Widget? createComponent(SingleColumnDocumentComponentContext componentContext,
+      SingleColumnLayoutComponentViewModel componentViewModel) {
     if (componentViewModel is! HorizontalRuleComponentViewModel) {
       return null;
     }

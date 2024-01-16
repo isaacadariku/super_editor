@@ -97,7 +97,8 @@ void main() {
     });
 
     group("on mobile", () {
-      testWidgetsOnAndroid("configures inner textfield textInputAction for newline when it's multiline",
+      testWidgetsOnAndroid(
+          "configures inner textfield textInputAction for newline when it's multiline",
           (tester) async {
         await tester.pumpWidget(
           _buildScaffold(
@@ -108,14 +109,17 @@ void main() {
           ),
         );
 
-        final innerTextField = tester.widget<SuperAndroidTextField>(find.byType(SuperAndroidTextField).first);
+        final innerTextField = tester.widget<SuperAndroidTextField>(
+            find.byType(SuperAndroidTextField).first);
 
         // Ensure inner textfield action is configured to newline
         // so we are able to receive new lines
-        expect(innerTextField.textInputAction, TextInputAction.newline);
+        expect(innerTextField.imeConfiguration, TextInputAction.newline);
       });
 
-      testWidgetsOnIos("configures inner textfield textInputAction for newline when it's multiline", (tester) async {
+      testWidgetsOnIos(
+          "configures inner textfield textInputAction for newline when it's multiline",
+          (tester) async {
         await tester.pumpWidget(
           _buildScaffold(
             child: const SuperTextField(
@@ -125,14 +129,17 @@ void main() {
           ),
         );
 
-        final innerTextField = tester.widget<SuperIOSTextField>(find.byType(SuperIOSTextField).first);
+        final innerTextField = tester
+            .widget<SuperIOSTextField>(find.byType(SuperIOSTextField).first);
 
         // Ensure inner textfield action is configured to newline
         // so we are able to receive new lines
-        expect(innerTextField.textInputAction, TextInputAction.newline);
+        expect(innerTextField.imeConfiguration, TextInputAction.newline);
       });
 
-      testWidgetsOnAndroid("configures inner textfield textInputAction for done when it's singleline", (tester) async {
+      testWidgetsOnAndroid(
+          "configures inner textfield textInputAction for done when it's singleline",
+          (tester) async {
         await tester.pumpWidget(
           _buildScaffold(
             child: const SuperTextField(
@@ -142,14 +149,17 @@ void main() {
           ),
         );
 
-        final innerTextField = tester.widget<SuperAndroidTextField>(find.byType(SuperAndroidTextField).first);
+        final innerTextField = tester.widget<SuperAndroidTextField>(
+            find.byType(SuperAndroidTextField).first);
 
         // Ensure inner textfield action is configured to done
         // because we should NOT receive new lines
-        expect(innerTextField.textInputAction, TextInputAction.done);
+        expect(innerTextField.imeConfiguration, TextInputAction.done);
       });
 
-      testWidgetsOnIos("configures inner textfield textInputAction for done when it's singleline", (tester) async {
+      testWidgetsOnIos(
+          "configures inner textfield textInputAction for done when it's singleline",
+          (tester) async {
         await tester.pumpWidget(
           _buildScaffold(
             child: const SuperTextField(
@@ -159,11 +169,12 @@ void main() {
           ),
         );
 
-        final innerTextField = tester.widget<SuperIOSTextField>(find.byType(SuperIOSTextField).first);
+        final innerTextField = tester
+            .widget<SuperIOSTextField>(find.byType(SuperIOSTextField).first);
 
         // Ensure inner textfield action is configured to done
         // because we should NOT receive new lines
-        expect(innerTextField.textInputAction, TextInputAction.done);
+        expect(innerTextField.imeConfiguration, TextInputAction.done);
       });
 
       testWidgetsOnIos('applies keyboard appearance', (tester) async {
@@ -182,7 +193,8 @@ void main() {
         String? keyboardAppearance;
 
         // Intercept messages sent to the platform.
-        tester.binding.defaultBinaryMessenger.setMockMessageHandler(SystemChannels.textInput.name, (message) async {
+        tester.binding.defaultBinaryMessenger.setMockMessageHandler(
+            SystemChannels.textInput.name, (message) async {
           final methodCall = const JSONMethodCodec().decodeMethodCall(message);
           if (methodCall.method == 'TextInput.setClient') {
             final params = methodCall.arguments[1] as Map;
@@ -243,7 +255,8 @@ void main() {
         expect(keyboardAppearance, 'Brightness.dark');
       });
 
-      testWidgetsOnIos('updates keyboard appearance when not attached to IME', (tester) async {
+      testWidgetsOnIos('updates keyboard appearance when not attached to IME',
+          (tester) async {
         final controller = ImeAttributedTextEditingController(
           keyboardAppearance: Brightness.light,
         );
@@ -286,7 +299,9 @@ void main() {
     });
 
     group("selection", () {
-      testWidgetsOnAllPlatforms("is inserted automatically when the field is initialized with focus", (tester) async {
+      testWidgetsOnAllPlatforms(
+          "is inserted automatically when the field is initialized with focus",
+          (tester) async {
         await tester.pumpWidget(
           _buildScaffold(
             child: SuperTextField(
@@ -299,7 +314,9 @@ void main() {
         expect(_isCaretPresent(tester), isTrue);
       });
 
-      testWidgetsOnAllPlatforms("is inserted automatically when the field is given focus", (tester) async {
+      testWidgetsOnAllPlatforms(
+          "is inserted automatically when the field is given focus",
+          (tester) async {
         final focusNode = FocusNode();
         await tester.pumpWidget(
           _buildScaffold(
@@ -372,7 +389,8 @@ void main() {
       });
     });
 
-    testWidgetsOnAllPlatforms('recalculates its viewport height when text changes for text smaller than maxLines',
+    testWidgetsOnAllPlatforms(
+        'recalculates its viewport height when text changes for text smaller than maxLines',
         (tester) async {
       final controller = AttributedTextEditingController();
 
@@ -405,7 +423,8 @@ SuperTextField
       expect(textFieldSize.height, greaterThanOrEqualTo(textSize.height));
     });
 
-    testWidgetsOnAllPlatforms('recalculates its viewport height when text changes for text bigger than maxLines',
+    testWidgetsOnAllPlatforms(
+        'recalculates its viewport height when text changes for text bigger than maxLines',
         (tester) async {
       final controller = AttributedTextEditingController();
 
@@ -435,7 +454,8 @@ SuperTextField
       await tester.pumpAndSettle();
 
       // Ensure the text field height has increased.
-      expect(tester.getSize(find.byType(SuperTextField)).height, greaterThan(textFieldSizeBefore.height));
+      expect(tester.getSize(find.byType(SuperTextField)).height,
+          greaterThan(textFieldSizeBefore.height));
     });
   });
 }
@@ -458,6 +478,7 @@ bool _isCaretPresent(WidgetTester tester) {
   if (caretMatches.isEmpty) {
     return false;
   }
-  final caretState = (caretMatches.single as StatefulElement).state as TextLayoutCaretState;
+  final caretState =
+      (caretMatches.single as StatefulElement).state as TextLayoutCaretState;
   return caretState.isCaretPresent;
 }

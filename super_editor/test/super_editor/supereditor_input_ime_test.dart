@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_test_robots/flutter_test_robots.dart';
 import 'package:flutter_test_runners/flutter_test_runners.dart';
-import 'package:super_editor/src/infrastructure/platforms/mac/mac_ime.dart';
 import 'package:super_editor/super_editor.dart';
 import 'package:super_editor/super_editor_test.dart';
 
@@ -15,7 +14,8 @@ import 'test_documents.dart';
 void main() {
   group('IME input', () {
     group('types characters', () {
-      testWidgetsOnAllPlatforms('at the beginning of existing text', (tester) async {
+      testWidgetsOnAllPlatforms('at the beginning of existing text',
+          (tester) async {
         final document = MutableDocument(
           nodes: [
             ParagraphNode(id: "1", text: AttributedText("<- text here")),
@@ -35,10 +35,12 @@ void main() {
         await tester.typeImeText("Hello");
 
         // Ensure the text was typed.
-        expect((document.nodes.first as ParagraphNode).text.text, "Hello<- text here");
+        expect((document.nodes.first as ParagraphNode).text.text,
+            "Hello<- text here");
       });
 
-      testWidgetsOnAllPlatforms('in the middle of existing text', (tester) async {
+      testWidgetsOnAllPlatforms('in the middle of existing text',
+          (tester) async {
         final document = MutableDocument(
           nodes: [
             ParagraphNode(id: "1", text: AttributedText("text here -><---")),
@@ -58,7 +60,8 @@ void main() {
         await tester.typeImeText("Hello");
 
         // Ensure the text was typed.
-        expect((document.nodes.first as ParagraphNode).text.text, "text here ->Hello<---");
+        expect((document.nodes.first as ParagraphNode).text.text,
+            "text here ->Hello<---");
       });
 
       testWidgetsOnAllPlatforms('at the end of existing text', (tester) async {
@@ -81,11 +84,13 @@ void main() {
         await tester.typeImeText("Hello");
 
         // Ensure the text was typed.
-        expect((document.nodes.first as ParagraphNode).text.text, "text here ->Hello");
+        expect((document.nodes.first as ParagraphNode).text.text,
+            "text here ->Hello");
       });
     });
 
-    testWidgetsOnAllPlatforms('allows apps to handle performAction in their own way', (tester) async {
+    testWidgetsOnAllPlatforms(
+        'allows apps to handle performAction in their own way', (tester) async {
       final document = singleParagraphEmptyDoc();
 
       int performActionCount = 0;
@@ -108,7 +113,8 @@ void main() {
       await tester.placeCaretInParagraph("1", 0);
 
       // Simulate a "Newline" action from the platform.
-      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
         SystemChannels.textInput.name,
         SystemChannels.textInput.codec.encodeMethodCall(
           const MethodCall(
@@ -168,14 +174,17 @@ void main() {
       expect(document.nodes.length, 1);
     });
 
-    testWidgetsOnMac('allows apps to handle selectors in their own way', (tester) async {
+    testWidgetsOnMac('allows apps to handle selectors in their own way',
+        (tester) async {
       bool customHandlerCalled = false;
 
       await tester //
           .createDocument()
           .withCustomContent(
             MutableDocument(
-              nodes: [ParagraphNode(id: '1', text: AttributedText('First paragraph'))],
+              nodes: [
+                ParagraphNode(id: '1', text: AttributedText('First paragraph'))
+              ],
             ),
           )
           .withInputSource(TextInputSource.ime)
@@ -206,7 +215,8 @@ void main() {
       );
     });
 
-    testWidgetsOnAllPlatforms('applies list of deltas the way some IMEs report them', (tester) async {
+    testWidgetsOnAllPlatforms(
+        'applies list of deltas the way some IMEs report them', (tester) async {
       // This test simulates an auto-correction scenario,
       // where the IME sends multiple insertion deltas at once.
 
@@ -307,7 +317,8 @@ void main() {
             ),
           ),
         );
-        final editor = createDefaultDocumentEditor(document: document, composer: composer);
+        final editor =
+            createDefaultDocumentEditor(document: document, composer: composer);
         final commonOps = CommonEditorOperations(
           editor: editor,
           document: document,
@@ -353,10 +364,12 @@ void main() {
           ),
         ]);
 
-        expect((document.nodes.first as ParagraphNode).text.text, "This is a sentence. ");
+        expect((document.nodes.first as ParagraphNode).text.text,
+            "This is a sentence. ");
       });
 
-      testWidgets('can type compound character in an empty paragraph', (tester) async {
+      testWidgets('can type compound character in an empty paragraph',
+          (tester) async {
         final editContext = await tester //
             .createDocument()
             .withTwoEmptyParagraphs()
@@ -373,14 +386,19 @@ void main() {
         //
         // We have to use implementation details to send the simulated IME deltas
         // because Flutter doesn't have any testing tools for IME deltas.
-        final imeInteractor = find.byType(SuperEditorImeInteractor).evaluate().first;
-        final deltaClient = ((imeInteractor as StatefulElement).state as ImeInputOwner).imeClient;
+        final imeInteractor =
+            find.byType(SuperEditorImeInteractor).evaluate().first;
+        final deltaClient =
+            ((imeInteractor as StatefulElement).state as ImeInputOwner)
+                .imeClient;
 
         // Ensure that the delta client starts with the expected invisible placeholder
         // characters.
         expect(deltaClient.currentTextEditingValue!.text, ". ");
-        expect(deltaClient.currentTextEditingValue!.selection, const TextSelection.collapsed(offset: 2));
-        expect(deltaClient.currentTextEditingValue!.composing, const TextRange(start: -1, end: -1));
+        expect(deltaClient.currentTextEditingValue!.selection,
+            const TextSelection.collapsed(offset: 2));
+        expect(deltaClient.currentTextEditingValue!.composing,
+            const TextRange(start: -1, end: -1));
 
         // Insert the "opt+u" character.
         deltaClient.updateEditingValueWithDeltas([
@@ -399,7 +417,8 @@ void main() {
 
         // Ensure that the IME still has the invisible characters.
         expect(deltaClient.currentTextEditingValue!.text, ". ¨");
-        expect(deltaClient.currentTextEditingValue!.composing, const TextRange(start: 2, end: 3));
+        expect(deltaClient.currentTextEditingValue!.composing,
+            const TextRange(start: 2, end: 3));
 
         // Insert the "u" character to create the compound character.
         deltaClient.updateEditingValueWithDeltas([
@@ -427,7 +446,8 @@ void main() {
     // Note: Some Android devices report ENTER and BACKSPACE as hardware keys. Other Android
     //       devices report "\n" insertion and deletion IME deltas, instead.
     group('on Xiaomi Redmi tablet (Android 12 SP1A)', () {
-      testWidgetsOnAndroid('applies list of deltas when inserting new lines', (tester) async {
+      testWidgetsOnAndroid('applies list of deltas when inserting new lines',
+          (tester) async {
         // This test simulates inserting a line break in the middle of the text,
         // followed by a non-text delta placing the selection/composing region on the new line.
         //
@@ -516,7 +536,9 @@ void main() {
         );
       });
 
-      testWidgetsOnAndroid('maintains correct selection after merging paragraphs', (tester) async {
+      testWidgetsOnAndroid(
+          'maintains correct selection after merging paragraphs',
+          (tester) async {
         await tester //
             .createDocument()
             .fromMarkdown('''
@@ -605,7 +627,8 @@ Paragraph two
             oldText: '. Anonimoi',
             replacementText: 'Anonymous',
             replacedRange: TextRange(start: 2, end: 10),
-            selection: TextSelection.collapsed(offset: 11, affinity: TextAffinity.downstream),
+            selection: TextSelection.collapsed(
+                offset: 11, affinity: TextAffinity.downstream),
             composing: TextRange(start: -1, end: -1),
           ),
           TextEditingDeltaInsertion(
@@ -784,7 +807,8 @@ Paragraph two
         expect(composingRegion, TextRange.empty);
       });
 
-      testWidgetsOnIos('applies keyboard suggestions and keeps styles', (tester) async {
+      testWidgetsOnIos('applies keyboard suggestions and keeps styles',
+          (tester) async {
         // Pump an editor with a bold text.
         final testContext = await tester //
             .createDocument()
@@ -793,7 +817,8 @@ Paragraph two
             .pump();
 
         // Place the caret at the end of the paragraph.
-        await tester.placeCaretInParagraph(testContext.document.nodes.first.id, 3);
+        await tester.placeCaretInParagraph(
+            testContext.document.nodes.first.id, 3);
 
         // Type a letter simulating a typo. The current text results in "Fixs".
         await tester.typeImeText('s');
@@ -825,7 +850,8 @@ Paragraph two
     });
 
     group('moves caret', () {
-      testWidgetsOnDesktopAndWeb('to end of previous node when LEFT_ARROW is pressed at the beginning of a paragraph',
+      testWidgetsOnDesktopAndWeb(
+          'to end of previous node when LEFT_ARROW is pressed at the beginning of a paragraph',
           (tester) async {
         await tester
             .createDocument() //
@@ -851,7 +877,8 @@ Paragraph two
         );
       }, variant: inputSourceVariant);
 
-      testWidgetsOnDesktopAndWeb('to the beginning of next node when RIGHT_ARROW is pressed at the end of a paragraph',
+      testWidgetsOnDesktopAndWeb(
+          'to the beginning of next node when RIGHT_ARROW is pressed at the end of a paragraph',
           (tester) async {
         await tester
             .createDocument() //
@@ -878,7 +905,8 @@ Paragraph two
       }, variant: inputSourceVariant);
     });
 
-    testWidgetsOnWebDesktop('deletes a character with backspace', (tester) async {
+    testWidgetsOnWebDesktop('deletes a character with backspace',
+        (tester) async {
       final testContext = await tester //
           .createDocument()
           .fromMarkdown('This is a paragraph')
@@ -907,7 +935,8 @@ Paragraph two
       );
 
       // Ensure the last character was deleted.
-      expect(SuperEditorInspector.findTextInParagraph(nodeId).text, 'This is a paragrap');
+      expect(SuperEditorInspector.findTextInParagraph(nodeId).text,
+          'This is a paragrap');
     });
 
     group('text serialization and selected content', () {
@@ -957,7 +986,8 @@ Paragraph two
             ),
             null,
           ).toTextEditingValue(),
-          expectedTextWithSelection: ". This is the |first paragraph of text.\nThis is the second paragraph| of text.",
+          expectedTextWithSelection:
+              ". This is the |first paragraph of text.\nThis is the second paragraph| of text.",
         );
       });
 
@@ -983,7 +1013,8 @@ Paragraph two
             ),
             null,
           ).toTextEditingValue(),
-          expectedTextWithSelection: ". This is a |paragraph of text.\n~\nThis is a paragraph| of text.",
+          expectedTextWithSelection:
+              ". This is a |paragraph of text.\n~\nThis is a paragraph| of text.",
         );
       });
 
@@ -1009,11 +1040,13 @@ Paragraph two
             ),
             null,
           ).toTextEditingValue(),
-          expectedTextWithSelection: ". |~\nThis is the first paragraph of text.\n~|",
+          expectedTextWithSelection:
+              ". |~\nThis is the first paragraph of text.\n~|",
         );
       });
 
-      testWidgetsOnArbitraryDesktop('sends selection to platform', (tester) async {
+      testWidgetsOnArbitraryDesktop('sends selection to platform',
+          (tester) async {
         final context = await tester //
             .createDocument()
             .withSingleParagraph()
@@ -1028,7 +1061,8 @@ Paragraph two
         String selectionAffinity = "";
 
         // Intercept messages sent to the platform.
-        tester.binding.defaultBinaryMessenger.setMockMessageHandler(SystemChannels.textInput.name, (message) async {
+        tester.binding.defaultBinaryMessenger.setMockMessageHandler(
+            SystemChannels.textInput.name, (message) async {
           final methodCall = const JSONMethodCodec().decodeMethodCall(message);
           if (methodCall.method == 'TextInput.setEditingState') {
             selectionBase = methodCall.arguments['selectionBase'];
@@ -1043,8 +1077,12 @@ Paragraph two
 
         final selection = SuperEditorInspector.findDocumentSelection()!;
         final base = (selection.base.nodePosition as TextNodePosition).offset;
-        final extent = (selection.extent.nodePosition as TextNodePosition).offset;
-        final affinity = context.findEditContext().document.getAffinityForSelection(selection);
+        final extent =
+            (selection.extent.nodePosition as TextNodePosition).offset;
+        final affinity = context
+            .findEditContext()
+            .document
+            .getAffinityForSelection(selection);
 
         // Ensure we sent the same base, extent and affinity to the platform.
         // Add two to account for the invisble characters prepended to the text.
@@ -1055,7 +1093,9 @@ Paragraph two
     });
 
     group('typing characters near a link', () {
-      testWidgetsOnMobile('does not expand the link when inserting before the link', (tester) async {
+      testWidgetsOnMobile(
+          'does not expand the link when inserting before the link',
+          (tester) async {
         // Configure and render a document.
         await tester //
             .createDocument()
@@ -1075,7 +1115,9 @@ Paragraph two
         );
       });
 
-      testWidgetsOnMobile('does not expand the link when inserting after the link', (tester) async {
+      testWidgetsOnMobile(
+          'does not expand the link when inserting after the link',
+          (tester) async {
         // Configure and render a document.
         await tester //
             .createDocument()
@@ -1086,12 +1128,14 @@ Paragraph two
         await tester.placeCaretInParagraph('1', 18);
 
         // Type characters after the link using the IME
-        await tester.ime.typeText(" to learn anything", getter: imeClientGetter);
+        await tester.ime
+            .typeText(" to learn anything", getter: imeClientGetter);
 
         // Ensure that the link is unchanged
         expect(
           SuperEditorInspector.findDocument(),
-          equalsMarkdown("[https://google.com](https://google.com) to learn anything"),
+          equalsMarkdown(
+              "[https://google.com](https://google.com) to learn anything"),
         );
       });
     });
@@ -1171,7 +1215,8 @@ Paragraph two
       });
     });
 
-    testWidgetsOnAllPlatforms('clears composing region after losing focus', (tester) async {
+    testWidgetsOnAllPlatforms('clears composing region after losing focus',
+        (tester) async {
       final focusNode = FocusNode();
 
       final testContext = await tester
@@ -1218,7 +1263,8 @@ Paragraph two
       expect(testContext.composer.composingRegion.value, isNull);
     });
 
-    testWidgetsOnAllPlatforms('clears composing region after selection changes', (tester) async {
+    testWidgetsOnAllPlatforms('clears composing region after selection changes',
+        (tester) async {
       final testContext = await tester
           .createDocument() //
           .withTwoEmptyParagraphs()
@@ -1286,8 +1332,8 @@ Paragraph two
 
 /// Intercepts `TextInput.setClient` calls and invokes [onSetKeyboard]
 /// with the configured keyboard keyboardAppearance.
-void _interceptKeyboardAppearanceSentToPlatform(
-    WidgetTester tester, void Function(String keyboardAppearance) onSetKeyboard) {
+void _interceptKeyboardAppearanceSentToPlatform(WidgetTester tester,
+    void Function(String keyboardAppearance) onSetKeyboard) {
   tester
       .interceptChannel(SystemChannels.textInput.name) //
       .interceptMethod(
@@ -1324,9 +1370,11 @@ void _expectTextEditingValue({
 }) {
   final selectionStartIndex = expectedTextWithSelection.indexOf("|");
   final selectionEndIndex =
-      expectedTextWithSelection.indexOf("|", selectionStartIndex + 1) - 1; // -1 to account for the selection start "|"
+      expectedTextWithSelection.indexOf("|", selectionStartIndex + 1) -
+          1; // -1 to account for the selection start "|"
   final expectedText = expectedTextWithSelection.replaceAll("|", "");
-  final expectedSelection = TextSelection(baseOffset: selectionStartIndex, extentOffset: selectionEndIndex);
+  final expectedSelection = TextSelection(
+      baseOffset: selectionStartIndex, extentOffset: selectionEndIndex);
 
   expect(
     actualTextEditingValue,
@@ -1344,12 +1392,14 @@ MutableDocument _singleParagraphWithLinkDoc() {
           AttributedSpans(
             attributions: [
               SpanMarker(
-                attribution: LinkAttribution(url: Uri.parse('https://google.com')),
+                attribution:
+                    LinkAttribution(url: Uri.parse('https://google.com')),
                 offset: 0,
                 markerType: SpanMarkerType.start,
               ),
               SpanMarker(
-                attribution: LinkAttribution(url: Uri.parse('https://google.com')),
+                attribution:
+                    LinkAttribution(url: Uri.parse('https://google.com')),
                 offset: 17,
                 markerType: SpanMarkerType.end,
               ),

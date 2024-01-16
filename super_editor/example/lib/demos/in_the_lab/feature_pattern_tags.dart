@@ -1,7 +1,6 @@
 import 'package:example/demos/in_the_lab/in_the_lab_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:super_editor/super_editor.dart';
-import 'package:super_text_layout/super_text_layout.dart';
 
 class HashTagsFeatureDemo extends StatefulWidget {
   const HashTagsFeatureDemo({super.key});
@@ -69,7 +68,8 @@ class _HashTagsFeatureDemoState extends State<HashTagsFeatureDemo> {
         composer: _composer,
         stylesheet: defaultStylesheet.copyWith(
           inlineTextStyler: (attributions, existingStyle) {
-            TextStyle style = defaultInlineTextStyler(attributions, existingStyle);
+            TextStyle style =
+                defaultInlineTextStyler(attributions, existingStyle);
 
             if (attributions.whereType<PatternTagAttribution>().isNotEmpty) {
               style = style.copyWith(

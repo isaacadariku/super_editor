@@ -11,12 +11,12 @@ import 'package:example/demos/demo_selectable_text.dart';
 import 'package:example/demos/editor_configs/demo_mobile_editing_android.dart';
 import 'package:example/demos/editor_configs/demo_mobile_editing_ios.dart';
 import 'package:example/demos/example_editor/example_editor.dart';
-import 'package:example/demos/in_the_lab/feature_action_tags.dart';
-import 'package:example/demos/in_the_lab/feature_pattern_tags.dart';
-import 'package:example/demos/in_the_lab/feature_stable_tags.dart';
 import 'package:example/demos/flutter_features/demo_inline_widgets.dart';
 import 'package:example/demos/flutter_features/textinputclient/basic_text_input_client.dart';
 import 'package:example/demos/flutter_features/textinputclient/textfield.dart';
+import 'package:example/demos/in_the_lab/feature_action_tags.dart';
+import 'package:example/demos/in_the_lab/feature_pattern_tags.dart';
+import 'package:example/demos/in_the_lab/feature_stable_tags.dart';
 import 'package:example/demos/in_the_lab/selected_text_colors_demo.dart';
 import 'package:example/demos/interaction_spot_checks/toolbar_following_content_in_layer.dart';
 import 'package:example/demos/scrolling/demo_task_and_chat_with_customscrollview.dart';
@@ -25,7 +25,6 @@ import 'package:example/demos/styles/demo_doc_styles.dart';
 import 'package:example/demos/super_reader/demo_super_reader.dart';
 import 'package:example/demos/supertextfield/demo_textfield.dart';
 import 'package:example/demos/supertextfield/ios/demo_superiostextfield.dart';
-import 'package:example/logging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -579,10 +578,11 @@ class _DrawerButton extends StatelessWidget {
               return Colors.transparent;
             }),
             // splashFactory: NoSplash.splashFactory,
-            foregroundColor:
-                MaterialStateColor.resolveWith((states) => isSelected ? Colors.white : const Color(0xFFBBBBBB)),
+            foregroundColor: MaterialStateColor.resolveWith((states) =>
+                isSelected ? Colors.white : const Color(0xFFBBBBBB)),
             elevation: MaterialStateProperty.resolveWith((states) => 0),
-            padding: MaterialStateProperty.resolveWith((states) => const EdgeInsets.all(16))),
+            padding: MaterialStateProperty.resolveWith(
+                (states) => const EdgeInsets.all(16))),
         onPressed: isSelected ? null : onPressed,
         child: Row(
           children: [

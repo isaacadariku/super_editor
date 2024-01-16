@@ -29,7 +29,8 @@ void main() {
       // Getting here without an error means the test passes.
     });
 
-    testWidgets("build with a single underlay and is same size as content", (tester) async {
+    testWidgets("build with a single underlay and is same size as content",
+        (tester) async {
       await _pumpScaffold(
         tester,
         child: ContentLayers(
@@ -43,7 +44,8 @@ void main() {
       // Getting here without an error means the test passes.
     });
 
-    testWidgets("build with a single overlay and is same size as content", (tester) async {
+    testWidgets("build with a single overlay and is same size as content",
+        (tester) async {
       await _pumpScaffold(
         tester,
         child: ContentLayers(
@@ -57,7 +59,9 @@ void main() {
       // Getting here without an error means the test passes.
     });
 
-    testWidgets("build with a single underlay and overlay and they are the same size as content", (tester) async {
+    testWidgets(
+        "build with a single underlay and overlay and they are the same size as content",
+        (tester) async {
       await _pumpScaffold(
         tester,
         child: ContentLayers(
@@ -74,7 +78,9 @@ void main() {
       // Getting here without an error means the test passes.
     });
 
-    testWidgets("build with multiple underlays and overlays and they are the same size as content", (tester) async {
+    testWidgets(
+        "build with multiple underlays and overlays and they are the same size as content",
+        (tester) async {
       await _pumpScaffold(
         tester,
         child: ContentLayers(
@@ -147,7 +153,9 @@ void main() {
       expect(contentBuildTracker.value, 1);
     });
 
-    testWidgets("lays out the content before building the layers during full tree build", (tester) async {
+    testWidgets(
+        "lays out the content before building the layers during full tree build",
+        (tester) async {
       final didContentLayout = ValueNotifier<bool>(false);
       bool didUnderlayLayout = false;
 
@@ -184,7 +192,9 @@ void main() {
       // Getting here without an error means the test passes.
     });
 
-    testWidgets("lays out the content before building the layers when the content root rebuilds", (tester) async {
+    testWidgets(
+        "lays out the content before building the layers when the content root rebuilds",
+        (tester) async {
       final rebuildSignal = ValueNotifier<int>(0);
       final buildTracker = ValueNotifier<int>(0);
       final contentLayoutCount = ValueNotifier<int>(0);
@@ -236,7 +246,9 @@ void main() {
       expect(layerLayoutCount.value, 2);
     });
 
-    testWidgets("lays out the content before building the layers when a content descendant rebuilds", (tester) async {
+    testWidgets(
+        "lays out the content before building the layers when a content descendant rebuilds",
+        (tester) async {
       final rebuildSignal = ValueNotifier<int>(0);
       final buildTracker = ValueNotifier<int>(0);
       final contentLayoutCount = ValueNotifier<int>(0);
@@ -297,7 +309,9 @@ void main() {
       expect(layerLayoutCount.value, 2);
     });
 
-    testWidgets("re-uses layer Elements instead of always re-inflating layer Widgets", (tester) async {
+    testWidgets(
+        "re-uses layer Elements instead of always re-inflating layer Widgets",
+        (tester) async {
       final rebuildSignal = ValueNotifier<int>(0);
       final buildTracker = ValueNotifier<int>(0);
       final contentKey = GlobalKey();
@@ -328,7 +342,8 @@ void main() {
                   elementTracker: underlayElementTracker,
                   onBuild: () {
                     // Ensure that this layer can access the render object of the content.
-                    final contentBox = contentKey.currentContext!.findRenderObject() as RenderBox?;
+                    final contentBox = contentKey.currentContext!
+                        .findRenderObject() as RenderBox?;
                     expect(contentBox, isNotNull);
                     expect(contentBox!.hasSize, isTrue);
                     expect(contentBox.localToGlobal(Offset.zero), isNotNull);
@@ -341,7 +356,8 @@ void main() {
                   elementTracker: overlayElementTracker,
                   onBuild: () {
                     // Ensure that this layer can access the render object of the content.
-                    final contentBox = contentKey.currentContext!.findRenderObject() as RenderBox?;
+                    final contentBox = contentKey.currentContext!
+                        .findRenderObject() as RenderBox?;
                     expect(contentBox, isNotNull);
                     expect(contentBox!.hasSize, isTrue);
                     expect(contentBox.localToGlobal(Offset.zero), isNotNull);
@@ -489,12 +505,16 @@ class _SizeValidatingLayer extends ContentLayerStatefulWidget {
   const _SizeValidatingLayer();
 
   @override
-  ContentLayerState<ContentLayerStatefulWidget, Object> createState() => _SizeValidatingLayerState();
+  ContentLayerState<ContentLayerStatefulWidget, Object> createState() =>
+      _SizeValidatingLayerState();
 }
 
-class _SizeValidatingLayerState extends ContentLayerState<_SizeValidatingLayer, Object> {
+class _SizeValidatingLayerState
+    extends ContentLayerState<_SizeValidatingLayer, Object> {
   @override
-  Object? computeLayoutData(Element? contentElement, RenderObject? contentLayout) => null;
+  Object? computeLayoutData(
+          Element? contentElement, RenderObject? contentLayout) =>
+      null;
 
   @override
   Widget doBuild(BuildContext context, Object? layoutData) {
@@ -547,8 +567,10 @@ class _RebuildableWidget extends StatefulWidget {
     this.onBuild,
     this.builder,
     this.child,
-  })  : assert(child != null || builder != null, "Must provide either a child OR a builder."),
-        assert(child == null || builder == null, "Can't provide a child AND a builder. Choose one."),
+  })  : assert(child != null || builder != null,
+            "Must provide either a child OR a builder."),
+        assert(child == null || builder == null,
+            "Can't provide a child AND a builder. Choose one."),
         super(key: key);
 
   /// Signal that instructs this widget to call `setState()`.
@@ -642,8 +664,10 @@ class _RebuildableContentLayerWidget extends ContentLayerStatefulWidget {
     this.onBuild,
     this.builder,
     this.child,
-  })  : assert(child != null || builder != null, "Must provide either a child OR a builder."),
-        assert(child == null || builder == null, "Can't provide a child AND a builder. Choose one."),
+  })  : assert(child != null || builder != null,
+            "Must provide either a child OR a builder."),
+        assert(child == null || builder == null,
+            "Can't provide a child AND a builder. Choose one."),
         super(key: key);
 
   /// Signal that instructs this widget to call `setState()`.
@@ -665,10 +689,12 @@ class _RebuildableContentLayerWidget extends ContentLayerStatefulWidget {
   final Widget? child;
 
   @override
-  ContentLayerState<ContentLayerStatefulWidget, Object> createState() => _RebuildableContentLayerWidgetState();
+  ContentLayerState<ContentLayerStatefulWidget, Object> createState() =>
+      _RebuildableContentLayerWidgetState();
 }
 
-class _RebuildableContentLayerWidgetState extends ContentLayerState<_RebuildableContentLayerWidget, Object> {
+class _RebuildableContentLayerWidgetState
+    extends ContentLayerState<_RebuildableContentLayerWidget, Object> {
   @override
   void initState() {
     super.initState();
@@ -716,7 +742,9 @@ class _RebuildableContentLayerWidgetState extends ContentLayerState<_Rebuildable
   }
 
   @override
-  Object? computeLayoutData(Element? contentElement, RenderObject? contentLayout) => null;
+  Object? computeLayoutData(
+          Element? contentElement, RenderObject? contentLayout) =>
+      null;
 
   @override
   Widget doBuild(BuildContext context, Object? object) {
