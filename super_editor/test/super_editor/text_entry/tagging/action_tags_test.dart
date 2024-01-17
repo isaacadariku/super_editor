@@ -23,7 +23,7 @@ void main() {
         await tester.typeImeText("/header");
 
         // Ensure that the tag has a composing attribution.
-        final text = SuperEditorInspector.findTextInParagraph("1");
+        final text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "/header");
         expect(
           text.getAttributedRange({actionTagComposingAttribution}, 0),
@@ -51,7 +51,7 @@ void main() {
         await tester.typeImeText("/header");
 
         // Ensure that the tag has a composing attribution.
-        final text = SuperEditorInspector.findTextInParagraph("1");
+        final text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "before /header after");
         expect(
           text.getAttributedRange({actionTagComposingAttribution}, 7),
@@ -81,7 +81,7 @@ void main() {
 
         // Ensure that there's no more composing attribution because the tag
         // should have been submitted.
-        final text = SuperEditorInspector.findTextInParagraph("1");
+        final text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "before /header after");
         expect(
           text.getAttributionSpansInRange(
@@ -119,7 +119,7 @@ void main() {
         await tester.typeImeText("/header");
 
         // Ensure that we started a composing tag before adding a space.
-        var text = SuperEditorInspector.findTextInParagraph("1");
+        var text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "before /header");
         expect(
           text.getAttributedRange({actionTagComposingAttribution}, 7),
@@ -129,7 +129,7 @@ void main() {
         await tester.typeImeText(" after");
 
         // Ensure that the composing attribution continues after the space.
-        text = SuperEditorInspector.findTextInParagraph("1");
+        text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "before /header after");
         expect(
           text.getAttributedRange({actionTagComposingAttribution}, 7),
@@ -159,7 +159,7 @@ void main() {
         await tester.typeImeText("@john");
 
         // Ensure that we're composing an action tag.
-        var text = SuperEditorInspector.findTextInParagraph("1");
+        var text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "before @john");
         expect(
           text.getAttributedRange({actionTagComposingAttribution}, 7),
@@ -208,7 +208,7 @@ void main() {
         );
 
         // Ensure we're still composing
-        AttributedText text = SuperEditorInspector.findTextInParagraph("1");
+        AttributedText text = SuperEditorInspector.findTextInComponent("1");
         expect(
           text.getAttributedRange({actionTagComposingAttribution}, 7),
           const SpanRange(7, 13),
@@ -223,7 +223,7 @@ void main() {
         await tester.pressShiftLeftArrow();
 
         // Ensure we're still composing
-        text = SuperEditorInspector.findTextInParagraph("1");
+        text = SuperEditorInspector.findTextInComponent("1");
         expect(
           text.getAttributedRange({actionTagComposingAttribution}, 7),
           const SpanRange(7, 13),
@@ -234,7 +234,7 @@ void main() {
         await tester.pressShiftLeftArrow();
 
         // Ensure we're still composing
-        text = SuperEditorInspector.findTextInParagraph("1");
+        text = SuperEditorInspector.findTextInComponent("1");
         expect(
           text.getAttributedRange({actionTagComposingAttribution}, 7),
           const SpanRange(7, 13),
@@ -298,7 +298,7 @@ void main() {
         );
 
         // Ensure we're still composing
-        AttributedText text = SuperEditorInspector.findTextInParagraph("1");
+        AttributedText text = SuperEditorInspector.findTextInComponent("1");
         expect(
           text.getAttributedRange({actionTagComposingAttribution}, 7),
           const SpanRange(7, 13),
@@ -340,7 +340,7 @@ void main() {
         );
 
         // Ensure that the tag was submitted.
-        final text = SuperEditorInspector.findTextInParagraph("1");
+        final text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "before /header");
         expect(
           text.getAttributedRange({actionTagCancelledAttribution}, 7),
@@ -388,7 +388,7 @@ void main() {
         await tester.pressLeftArrow();
 
         // Ensure that the action tag was cancelled.
-        final text = SuperEditorInspector.findTextInParagraph("1");
+        final text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "before /header");
         expect(
           text.getAttributedRange({actionTagCancelledAttribution}, 7),
@@ -443,7 +443,7 @@ void main() {
         await tester.pressRightArrow();
 
         // Ensure that the action tag was cancelled.
-        final text = SuperEditorInspector.findTextInParagraph("1");
+        final text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "before /header after");
         expect(
           text.getAttributedRange({actionTagCancelledAttribution}, 7),
@@ -472,7 +472,7 @@ void main() {
         await tester.typeImeText("/");
 
         // Ensure that we're composing.
-        var text = SuperEditorInspector.findTextInParagraph("1");
+        var text = SuperEditorInspector.findTextInComponent("1");
         expect(
           text.getAttributedRange({actionTagComposingAttribution}, 7),
           const SpanRange(7, 7),
@@ -482,7 +482,7 @@ void main() {
         await tester.pressEscape();
 
         // Ensure that the composing was cancelled.
-        text = SuperEditorInspector.findTextInParagraph("1");
+        text = SuperEditorInspector.findTextInComponent("1");
         expect(
           text.getAttributionSpansInRange(
             attributionFilter: (attribution) =>
@@ -500,7 +500,7 @@ void main() {
         await tester.typeImeText("h");
 
         // Ensure that we didn't start composing again.
-        text = SuperEditorInspector.findTextInParagraph("1");
+        text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "before /h");
         expect(
           text.getAttributionSpansInRange(
@@ -519,7 +519,7 @@ void main() {
         await tester.typeImeText(" ");
 
         // Ensure that the cancelled tag wasn't submitted, and didn't start composing again.
-        text = SuperEditorInspector.findTextInParagraph("1");
+        text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "before /h ");
         expect(
           text.getAttributionSpansInRange(
@@ -597,7 +597,7 @@ void main() {
         await tester.pressEnter();
 
         // Ensure that the action tag was removed after submission.
-        final text = SuperEditorInspector.findTextInParagraph("1");
+        final text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "");
       });
 
@@ -624,7 +624,7 @@ void main() {
         await tester.pressEnter();
 
         // Ensure that the action tag was removed.
-        final text = SuperEditorInspector.findTextInParagraph("1");
+        final text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "before ");
         expect(
           text.getAttributionSpansInRange(
@@ -659,7 +659,7 @@ void main() {
         await tester.pressEnter();
 
         // Ensure that the action tag was removed.
-        final text = SuperEditorInspector.findTextInParagraph("1");
+        final text = SuperEditorInspector.findTextInComponent("1");
         expect(text.text, "before  after");
         expect(
           text.getAttributionSpansInRange(

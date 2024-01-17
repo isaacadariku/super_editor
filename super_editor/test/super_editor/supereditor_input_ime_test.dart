@@ -289,7 +289,7 @@ void main() {
 
       // Ensure the text was inserted.
       expect(
-        SuperEditorInspector.findTextInParagraph('1').text,
+        SuperEditorInspector.findTextInComponent('1').text,
         'Going.',
       );
     });
@@ -644,7 +644,7 @@ Paragraph two
         ], getter: imeClientGetter);
 
         expect(
-          SuperEditorInspector.findTextInParagraph('1').text,
+          SuperEditorInspector.findTextInComponent('1').text,
           'Anonymous ',
         );
       });
@@ -689,7 +689,7 @@ Paragraph two
         ], getter: imeClientGetter);
 
         expect(
-          SuperEditorInspector.findTextInParagraph('1').text,
+          SuperEditorInspector.findTextInComponent('1').text,
           'Anonymous ',
         );
       });

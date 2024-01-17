@@ -156,7 +156,12 @@ class AndroidTextFieldTouchInteractorState extends State<AndroidTextFieldTouchIn
       //
       // We don't do this when the user is dragging the caret because the user's finger position
       // and the auto-scrolling system should control the scroll offset in that case.
-      widget.textScrollController.ensureExtentIsVisible();
+      onNextFrame((timeStamp) {
+        // We adjust for the extent offset in the next frame because we need the
+        // underlying RenderParagraph to update first, so that we can inspect the
+        // text layout for the most recent text and selection.
+        widget.textScrollController.ensureExtentIsVisible();
+      });
     }
   }
 
@@ -212,7 +217,7 @@ class AndroidTextFieldTouchInteractorState extends State<AndroidTextFieldTouchIn
     final tapTextPosition = _getTextPositionAtOffset(localOffset);
     if (tapTextPosition == null) {
       // This situation indicates the user tapped in empty space
-      widget.textController.selection = TextSelection.collapsed(offset: widget.textController.text.text.length);
+      widget.textController.selection = TextSelection.collapsed(offset: widget.textController.text.length);
     } else {
       // Update the text selection to a collapsed selection where the user tapped.
       widget.textController.selection = tapTextPosition.offset >= 0

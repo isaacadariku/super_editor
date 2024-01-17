@@ -477,7 +477,7 @@ class SplitParagraphCommand implements EditCommand {
     editorDocLog.info(' - start text: "${startText.text}"');
     editorDocLog.info(' - end text: "${endText.text}"');
 
-    if (splitPosition.offset == text.text.length) {
+    if (splitPosition.offset == text.length) {
       // The paragraph was split at the very end, the user is creating a new,
       // empty paragraph. We should only extend desired attributions from the end
       // of one paragraph, to the beginning of a new paragraph.
@@ -495,7 +495,7 @@ class SplitParagraphCommand implements EditCommand {
         // This attribution shouldn't extend from one paragraph to another. Remove it.
         endText.removeAttribution(
           attributionRange.attribution,
-          SpanRange(attributionRange.start, attributionRange.end),
+          attributionRange.range,
         );
       }
     }
@@ -658,7 +658,7 @@ class DeleteUpstreamAtBeginningOfParagraphCommand implements EditCommand {
       return false;
     }
 
-    final aboveParagraphLength = nodeAbove.text.text.length;
+    final aboveParagraphLength = nodeAbove.text.length;
 
     // Send edit command.
     executor

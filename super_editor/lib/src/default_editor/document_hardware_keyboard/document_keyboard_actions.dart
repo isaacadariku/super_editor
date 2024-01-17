@@ -483,7 +483,7 @@ ExecutionInstruction mergeNodeWithNextWhenDeleteIsPressed({
     return ExecutionInstruction.continueExecution;
   }
 
-  final currentParagraphLength = node.text.text.length;
+  final currentParagraphLength = node.text.length;
 
   // Send edit command.
   editContext.editor.execute([

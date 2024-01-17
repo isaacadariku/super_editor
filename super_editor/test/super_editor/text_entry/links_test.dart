@@ -24,13 +24,13 @@ void main() {
         await tester.typeImeText("https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph("1");
+        var text = SuperEditorInspector.findTextInComponent("1");
 
         expect(text.text, "https://www.google.com");
         expect(
           text.getAttributionSpansInRange(
             attributionFilter: (attribution) => true,
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isEmpty,
         );
@@ -39,7 +39,7 @@ void main() {
         await tester.typeImeText(" ");
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph("1");
+        text = SuperEditorInspector.findTextInComponent("1");
 
         expect(text.text, "https://www.google.com ");
         expect(
@@ -47,7 +47,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(0, text.text.length - 2),
+            range: SpanRange(0, text.length - 2),
           ),
           isTrue,
         );
@@ -67,13 +67,13 @@ void main() {
         await tester.typeImeText("https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph("1");
+        var text = SuperEditorInspector.findTextInComponent("1");
 
         expect(text.text, "https://www.google.com");
         expect(
           text.getAttributionSpansInRange(
             attributionFilter: (attribution) => true,
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isEmpty,
         );
@@ -82,7 +82,7 @@ void main() {
         await tester.pressEnter();
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph("1");
+        text = SuperEditorInspector.findTextInComponent("1");
 
         expect(text.text, "https://www.google.com");
         expect(
@@ -90,7 +90,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -117,7 +117,7 @@ void main() {
         await tester.typeImeText("https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph(nodeId);
+        var text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Before link https://www.google.comafter link");
         expect(
@@ -132,7 +132,7 @@ void main() {
         await tester.pressEnter();
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph(nodeId);
+        text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Before link https://www.google.com");
         expect(
@@ -140,7 +140,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(12, text.text.length - 1),
+            range: SpanRange(12, text.length - 1),
           ),
           isTrue,
         );
@@ -167,13 +167,13 @@ void main() {
         await tester.typeImeText("https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph("1");
+        var text = SuperEditorInspector.findTextInComponent("1");
 
         expect(text.text, "https://www.google.com");
         expect(
           text.getAttributionSpansInRange(
             attributionFilter: (attribution) => true,
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isEmpty,
         );
@@ -183,7 +183,7 @@ void main() {
         await tester.typeImeText('\n');
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph("1");
+        text = SuperEditorInspector.findTextInComponent("1");
 
         expect(text.text, "https://www.google.com");
         expect(
@@ -191,7 +191,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -220,7 +220,7 @@ void main() {
         await tester.typeImeText("https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph(nodeId);
+        var text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Before link https://www.google.comafter link");
         expect(
@@ -236,7 +236,7 @@ void main() {
         await tester.typeImeText('\n');
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph(nodeId);
+        text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Before link https://www.google.com");
         expect(
@@ -244,7 +244,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(12, text.text.length - 1),
+            range: SpanRange(12, text.length - 1),
           ),
           isTrue,
         );
@@ -270,13 +270,13 @@ void main() {
         await tester.typeImeText("https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph("1");
+        var text = SuperEditorInspector.findTextInComponent("1");
 
         expect(text.text, "https://www.google.com");
         expect(
           text.getAttributionSpansInRange(
             attributionFilter: (attribution) => true,
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isEmpty,
         );
@@ -287,7 +287,7 @@ void main() {
         await tester.pump();
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph("1");
+        text = SuperEditorInspector.findTextInComponent("1");
 
         expect(text.text, "https://www.google.com");
         expect(
@@ -295,7 +295,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -324,7 +324,7 @@ void main() {
         await tester.typeImeText("https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph(nodeId);
+        var text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Before link https://www.google.comafter link");
         expect(
@@ -341,7 +341,7 @@ void main() {
         await tester.pump();
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph(nodeId);
+        text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Before link https://www.google.com");
         expect(
@@ -349,7 +349,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(12, text.text.length - 1),
+            range: SpanRange(12, text.length - 1),
           ),
           isTrue,
         );
@@ -376,13 +376,13 @@ void main() {
         await tester.typeImeText(" https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph(nodeId);
+        var text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Item https://www.google.com");
         expect(
           text.getAttributionSpansInRange(
             attributionFilter: (attribution) => true,
-            range: SpanRange(5, text.text.length - 1),
+            range: SpanRange(5, text.length - 1),
           ),
           isEmpty,
         );
@@ -391,7 +391,7 @@ void main() {
         await tester.pressEnter();
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph(nodeId);
+        text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Item https://www.google.com");
         expect(
@@ -399,7 +399,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(5, text.text.length - 1),
+            range: SpanRange(5, text.length - 1),
           ),
           isTrue,
         );
@@ -426,7 +426,7 @@ void main() {
         await tester.typeImeText("https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph(nodeId);
+        var text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Before link https://www.google.comafter link");
         expect(
@@ -441,7 +441,7 @@ void main() {
         await tester.pressEnter();
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph(nodeId);
+        text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Before link https://www.google.com");
         expect(
@@ -449,7 +449,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(12, text.text.length - 1),
+            range: SpanRange(12, text.length - 1),
           ),
           isTrue,
         );
@@ -478,13 +478,13 @@ void main() {
         await tester.typeImeText(" https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph(nodeId);
+        var text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Item https://www.google.com");
         expect(
           text.getAttributionSpansInRange(
             attributionFilter: (attribution) => true,
-            range: SpanRange(5, text.text.length - 1),
+            range: SpanRange(5, text.length - 1),
           ),
           isEmpty,
         );
@@ -494,7 +494,7 @@ void main() {
         await tester.typeImeText('\n');
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph(nodeId);
+        text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Item https://www.google.com");
         expect(
@@ -502,7 +502,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(5, text.text.length - 1),
+            range: SpanRange(5, text.length - 1),
           ),
           isTrue,
         );
@@ -531,7 +531,7 @@ void main() {
         await tester.typeImeText("https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph(nodeId);
+        var text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Before link https://www.google.comafter link");
         expect(
@@ -547,7 +547,7 @@ void main() {
         await tester.typeImeText('\n');
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph(nodeId);
+        text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Before link https://www.google.com");
         expect(
@@ -555,7 +555,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(12, text.text.length - 1),
+            range: SpanRange(12, text.length - 1),
           ),
           isTrue,
         );
@@ -583,13 +583,13 @@ void main() {
         await tester.typeImeText(" https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph(nodeId);
+        var text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Item https://www.google.com");
         expect(
           text.getAttributionSpansInRange(
             attributionFilter: (attribution) => true,
-            range: SpanRange(5, text.text.length - 1),
+            range: SpanRange(5, text.length - 1),
           ),
           isEmpty,
         );
@@ -600,7 +600,7 @@ void main() {
         await tester.pump();
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph(nodeId);
+        text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Item https://www.google.com");
         expect(
@@ -608,7 +608,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(5, text.text.length - 1),
+            range: SpanRange(5, text.length - 1),
           ),
           isTrue,
         );
@@ -637,7 +637,7 @@ void main() {
         await tester.typeImeText("https://www.google.com");
 
         // Ensure it's not linkified yet.
-        var text = SuperEditorInspector.findTextInParagraph(nodeId);
+        var text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Before link https://www.google.comafter link");
         expect(
@@ -654,7 +654,7 @@ void main() {
         await tester.pump();
 
         // Ensure it's linkified.
-        text = SuperEditorInspector.findTextInParagraph(nodeId);
+        text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "Before link https://www.google.com");
         expect(
@@ -662,7 +662,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(12, text.text.length - 1),
+            range: SpanRange(12, text.length - 1),
           ),
           isTrue,
         );
@@ -711,7 +711,7 @@ void main() {
         expect(
           text.getAttributionSpansInRange(
             attributionFilter: (attribution) => true,
-            range: SpanRange(15, text.text.length - 1),
+            range: SpanRange(15, text.length - 1),
           ),
           isEmpty,
         );
@@ -728,7 +728,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(15, text.text.length - 1),
+            range: SpanRange(15, text.length - 1),
           ),
           isTrue,
         );
@@ -794,7 +794,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(12, text.text.length - 1),
+            range: SpanRange(12, text.length - 1),
           ),
           isTrue,
         );
@@ -845,7 +845,7 @@ void main() {
         expect(
           text.getAttributionSpansInRange(
             attributionFilter: (attribution) => true,
-            range: SpanRange(15, text.text.length - 1),
+            range: SpanRange(15, text.length - 1),
           ),
           isEmpty,
         );
@@ -863,7 +863,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(15, text.text.length - 1),
+            range: SpanRange(15, text.length - 1),
           ),
           isTrue,
         );
@@ -932,7 +932,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(12, text.text.length - 1),
+            range: SpanRange(12, text.length - 1),
           ),
           isTrue,
         );
@@ -982,7 +982,7 @@ void main() {
         expect(
           text.getAttributionSpansInRange(
             attributionFilter: (attribution) => true,
-            range: SpanRange(15, text.text.length - 1),
+            range: SpanRange(15, text.length - 1),
           ),
           isEmpty,
         );
@@ -1001,7 +1001,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(15, text.text.length - 1),
+            range: SpanRange(15, text.length - 1),
           ),
           isTrue,
         );
@@ -1070,7 +1070,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.com")),
             },
-            range: SpanRange(12, text.text.length - 1),
+            range: SpanRange(12, text.length - 1),
           ),
           isTrue,
         );
@@ -1096,7 +1096,7 @@ void main() {
       await tester.typeImeText("https://www.google.com and https://flutter.dev ");
 
       // Ensure both URLs are linkified with the correct URLs.
-      final text = SuperEditorInspector.findTextInParagraph("1");
+      final text = SuperEditorInspector.findTextInComponent("1");
 
       expect(text.text, "https://www.google.com and https://flutter.dev ");
       expect(
@@ -1134,13 +1134,13 @@ void main() {
       await tester.typeImeText("google.com");
 
       // Ensure it's not linkified yet.
-      var text = SuperEditorInspector.findTextInParagraph("1");
+      var text = SuperEditorInspector.findTextInComponent("1");
 
       expect(text.text, "google.com");
       expect(
         text.getAttributionSpansInRange(
           attributionFilter: (attribution) => true,
-          range: SpanRange(0, text.text.length - 1),
+          range: SpanRange(0, text.length - 1),
         ),
         isEmpty,
       );
@@ -1149,7 +1149,7 @@ void main() {
       await tester.typeImeText(" ");
 
       // Ensure it's linkified.
-      text = SuperEditorInspector.findTextInParagraph("1");
+      text = SuperEditorInspector.findTextInComponent("1");
 
       expect(text.text, "google.com ");
       expect(
@@ -1157,7 +1157,7 @@ void main() {
           attributions: {
             LinkAttribution(url: Uri.parse("https://google.com")),
           },
-          range: SpanRange(0, text.text.length - 2),
+          range: SpanRange(0, text.length - 2),
         ),
         isTrue,
       );
@@ -1180,8 +1180,8 @@ void main() {
       await tester.typeImeText(" ");
 
       // Ensure it's linkified with a URL schema.
-      var text = SuperEditorInspector.findTextInParagraph("1");
-      text = SuperEditorInspector.findTextInParagraph("1");
+      var text = SuperEditorInspector.findTextInComponent("1");
+      text = SuperEditorInspector.findTextInComponent("1");
 
       expect(text.text, "www.google.com ");
       expect(
@@ -1189,7 +1189,7 @@ void main() {
           attributions: {
             LinkAttribution(url: Uri.parse("https://www.google.com")),
           },
-          range: SpanRange(0, text.text.length - 2),
+          range: SpanRange(0, text.length - 2),
         ),
         isTrue,
       );
@@ -1353,7 +1353,7 @@ void main() {
 
         // Ensure the characters were inserted, the whole link is still attributed.
         final nodeId = doc.nodes.first.id;
-        var text = SuperEditorInspector.findTextInParagraph(nodeId);
+        var text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "www.googoooole.com");
         expect(
@@ -1361,7 +1361,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("www.google.com")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -1384,14 +1384,14 @@ void main() {
         await tester.typeImeText("oooo");
 
         // Ensure the characters were inserted and the link was updated.
-        final text = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        final text = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(text.text, "www.googoooole.com");
         expect(
           text.hasAttributionsThroughout(
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.googoooole.com")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -1414,7 +1414,7 @@ void main() {
         await tester.typeImeText("oooo");
 
         // Ensure the characters were inserted and the attribution was removed.
-        final text = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        final text = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(text.text, "www.googoooole.com");
         expect(text.spans.markers, isEmpty);
       });
@@ -1441,7 +1441,7 @@ void main() {
 
         // Ensure the characters were inserted, the whole link is still attributed.
         final nodeId = doc.nodes.first.id;
-        var text = SuperEditorInspector.findTextInParagraph(nodeId);
+        var text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "google.com");
         expect(
@@ -1449,7 +1449,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("www.google.com")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -1475,14 +1475,14 @@ void main() {
         await tester.pressDelete();
 
         // Ensure the characters were delete and link attribution was updated.
-        final text = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        final text = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(text.text, "google.com");
         expect(
           text.hasAttributionsThroughout(
             attributions: {
               LinkAttribution(url: Uri.parse("https://google.com")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -1499,7 +1499,7 @@ void main() {
         await tester.pressDelete();
 
         // Ensure the attribution was updated.
-        final textAfter = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        final textAfter = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(textAfter.text, "m");
         expect(
           (textAfter.getAllAttributionsAt(0).first as LinkAttribution).url.toString(),
@@ -1510,7 +1510,7 @@ void main() {
         await tester.pressDelete();
 
         // Ensure the text was deleted.
-        expect(SuperEditorInspector.findTextInParagraph(doc.nodes.first.id).text, isEmpty);
+        expect(SuperEditorInspector.findTextInComponent(doc.nodes.first.id).text, isEmpty);
       });
 
       testWidgetsOnAllPlatforms('removing the attribution', (tester) async {
@@ -1533,7 +1533,7 @@ void main() {
         await tester.pressDelete();
 
         // Ensure the characters were delete and link attribution was removed.
-        final text = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        final text = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(text.text, "google.com");
         expect(text.spans.markers, isEmpty);
       });
@@ -1560,14 +1560,14 @@ void main() {
         await tester.pressBackspace();
 
         // Ensure the characters were deleted and the whole link is still attributed.
-        final text = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        final text = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(text.text, "www.g.com");
         expect(
           text.hasAttributionsThroughout(
             attributions: {
               LinkAttribution(url: Uri.parse("www.google.com")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -1598,14 +1598,14 @@ void main() {
         await tester.typeImeText('duckduckgo');
 
         // Ensure the text and the link were updated.
-        var text = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        var text = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(text.text, "www.duckduckgo.com");
         expect(
           text.hasAttributionsThroughout(
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.duckduckgo.com")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -1628,7 +1628,7 @@ void main() {
         await tester.pressBackspace();
 
         // Ensure the text was updated and the attribution was removed.
-        final text = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        final text = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(text.text, "www.googl.com");
         expect(text.spans.markers, isEmpty);
       });
@@ -1655,7 +1655,7 @@ void main() {
 
         // Ensure the characters were inserted, the whole link is still attributed.
         final nodeId = doc.nodes.first.id;
-        var text = SuperEditorInspector.findTextInParagraph(nodeId);
+        var text = SuperEditorInspector.findTextInComponent(nodeId);
 
         expect(text.text, "www.google");
         expect(
@@ -1663,7 +1663,7 @@ void main() {
             attributions: {
               LinkAttribution(url: Uri.parse("www.google.com")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -1687,14 +1687,14 @@ void main() {
         await tester.pressBackspace();
 
         // Ensure the characters were deleted and the link was updated.
-        final text = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        final text = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(text.text, "www.google.c");
         expect(
           text.hasAttributionsThroughout(
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.google.c")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -1717,7 +1717,7 @@ void main() {
         await tester.pressBackspace();
 
         // Ensure the character was deleted and the link was removed.
-        final text = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        final text = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(text.text, "www.google.co");
         expect(text.spans.markers, isEmpty);
       });
@@ -1740,14 +1740,14 @@ void main() {
         await tester.typeImeText('duckduckgo');
 
         // Ensure the text and the link were updated.
-        final text = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        final text = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(text.text, "www.duckduckgo.com");
         expect(
           text.hasAttributionsThroughout(
             attributions: {
               LinkAttribution(url: Uri.parse("www.google.com")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -1770,14 +1770,14 @@ void main() {
         await tester.typeImeText('duckduckgo');
 
         // Ensure the text and the link were updated.
-        final text = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        final text = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(text.text, "www.duckduckgo.com");
         expect(
           text.hasAttributionsThroughout(
             attributions: {
               LinkAttribution(url: Uri.parse("https://www.duckduckgo.com")),
             },
-            range: SpanRange(0, text.text.length - 1),
+            range: SpanRange(0, text.length - 1),
           ),
           isTrue,
         );
@@ -1800,7 +1800,7 @@ void main() {
         await tester.typeImeText('duckduckgo');
 
         // Ensure the text and the link were updated.
-        final text = SuperEditorInspector.findTextInParagraph(doc.nodes.first.id);
+        final text = SuperEditorInspector.findTextInComponent(doc.nodes.first.id);
         expect(text.text, "www.duckduckgo.com");
         expect(text.spans.markers, isEmpty);
       });
@@ -1826,7 +1826,7 @@ void main() {
 
       // Ensure the text were inserted, and only the URL is linkified.
       final nodeId = doc.nodes.first.id;
-      var text = SuperEditorInspector.findTextInParagraph(nodeId);
+      var text = SuperEditorInspector.findTextInComponent(nodeId);
 
       expect(text.text, "www.google.co hello");
       expect(
@@ -1843,7 +1843,7 @@ void main() {
           attributions: {
             LinkAttribution(url: Uri.parse("www.google.com")),
           },
-          range: SpanRange(13, text.text.length - 1),
+          range: SpanRange(13, text.length - 1),
         ),
         isFalse,
       );
@@ -1869,19 +1869,19 @@ void main() {
       // ensure that no link markers were added to the empty paragraph.
       expect(doc.nodes.length, 2);
       final newParagraphId = doc.nodes[1].id;
-      AttributedText newParagraphText = SuperEditorInspector.findTextInParagraph(newParagraphId);
+      AttributedText newParagraphText = SuperEditorInspector.findTextInComponent(newParagraphId);
       expect(newParagraphText.spans.markers, isEmpty);
 
       // Type some text.
       await tester.typeImeText("New paragraph");
 
       // Ensure the text we typed didn't re-introduce a link attribution.
-      newParagraphText = SuperEditorInspector.findTextInParagraph(newParagraphId);
+      newParagraphText = SuperEditorInspector.findTextInComponent(newParagraphId);
       expect(newParagraphText.text, "New paragraph");
       expect(
         newParagraphText.getAttributionSpansInRange(
           attributionFilter: (a) => a is LinkAttribution,
-          range: SpanRange(0, newParagraphText.text.length - 1),
+          range: SpanRange(0, newParagraphText.length - 1),
         ),
         isEmpty,
       );
@@ -1911,19 +1911,19 @@ void main() {
       expect(doc.nodes.length, 2);
       expect(doc.nodes[1], isA<ListItemNode>());
       final newListItemId = doc.nodes[1].id;
-      AttributedText newListItemText = SuperEditorInspector.findTextInParagraph(newListItemId);
+      AttributedText newListItemText = SuperEditorInspector.findTextInComponent(newListItemId);
       expect(newListItemText.spans.markers, isEmpty);
 
       // Type some text.
       await tester.typeImeText("New list item");
 
       // Ensure the text we typed didn't re-introduce a link attribution.
-      newListItemText = SuperEditorInspector.findTextInParagraph(newListItemId);
+      newListItemText = SuperEditorInspector.findTextInComponent(newListItemId);
       expect(newListItemText.text, "New list item");
       expect(
         newListItemText.getAttributionSpansInRange(
           attributionFilter: (a) => a is LinkAttribution,
-          range: SpanRange(0, newListItemText.text.length - 1),
+          range: SpanRange(0, newListItemText.length - 1),
         ),
         isEmpty,
       );
