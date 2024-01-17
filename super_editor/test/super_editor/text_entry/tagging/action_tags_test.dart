@@ -11,7 +11,8 @@ import '../../test_documents.dart';
 void main() {
   group("SuperEditor action tags >", () {
     group("composing >", () {
-      testWidgetsOnAllPlatforms("can start at the beginning of a paragraph", (tester) async {
+      testWidgetsOnAllPlatforms("can start at the beginning of a paragraph",
+          (tester) async {
         await _pumpTestEditor(
           tester,
           singleParagraphEmptyDoc(),
@@ -58,7 +59,8 @@ void main() {
         );
       });
 
-      testWidgetsOnAllPlatforms("by default does not continue after a space", (tester) async {
+      testWidgetsOnAllPlatforms("by default does not continue after a space",
+          (tester) async {
         await _pumpTestEditor(
           tester,
           MutableDocument(
@@ -83,7 +85,8 @@ void main() {
         expect(text.text, "before /header after");
         expect(
           text.getAttributionSpansInRange(
-            attributionFilter: (attribution) => attribution == actionTagComposingAttribution,
+            attributionFilter: (attribution) =>
+                attribution == actionTagComposingAttribution,
             range: const SpanRange(0, 18),
           ),
           isEmpty,
@@ -94,7 +97,8 @@ void main() {
         );
       });
 
-      testWidgetsOnAllPlatforms("can be configured to continue after a space", (tester) async {
+      testWidgetsOnAllPlatforms("can be configured to continue after a space",
+          (tester) async {
         await _pumpTestEditor(
           tester,
           MutableDocument(
@@ -133,7 +137,8 @@ void main() {
         );
       });
 
-      testWidgetsOnAllPlatforms("can be configured to use a different trigger", (tester) async {
+      testWidgetsOnAllPlatforms("can be configured to use a different trigger",
+          (tester) async {
         await _pumpTestEditor(
           tester,
           MutableDocument(
@@ -162,7 +167,8 @@ void main() {
         );
       });
 
-      testWidgetsOnAllPlatforms("continues when user expands the selection upstream", (tester) async {
+      testWidgetsOnAllPlatforms(
+          "continues when user expands the selection upstream", (tester) async {
         await _pumpTestEditor(
           tester,
           MutableDocument(
@@ -235,7 +241,9 @@ void main() {
         );
       });
 
-      testWidgetsOnAllPlatforms("continues when user expands the selection downstream", (tester) async {
+      testWidgetsOnAllPlatforms(
+          "continues when user expands the selection downstream",
+          (tester) async {
         await _pumpTestEditor(
           tester,
           MutableDocument(
@@ -297,7 +305,8 @@ void main() {
         );
       });
 
-      testWidgetsOnAllPlatforms("cancels when the user moves the caret", (tester) async {
+      testWidgetsOnAllPlatforms("cancels when the user moves the caret",
+          (tester) async {
         await _pumpTestEditor(
           tester,
           MutableDocument(
@@ -339,7 +348,9 @@ void main() {
         );
       });
 
-      testWidgetsOnAllPlatforms("cancels when upstream selection collapses outside of tag", (tester) async {
+      testWidgetsOnAllPlatforms(
+          "cancels when upstream selection collapses outside of tag",
+          (tester) async {
         await _pumpTestEditor(
           tester,
           MutableDocument(
@@ -385,7 +396,9 @@ void main() {
         );
       });
 
-      testWidgetsOnAllPlatforms("cancels when downstream selection collapses outside of tag", (tester) async {
+      testWidgetsOnAllPlatforms(
+          "cancels when downstream selection collapses outside of tag",
+          (tester) async {
         await _pumpTestEditor(
           tester,
           MutableDocument(
@@ -438,7 +451,8 @@ void main() {
         );
       });
 
-      testWidgetsOnAllPlatforms("cancels composing when the user presses ESC", (tester) async {
+      testWidgetsOnAllPlatforms("cancels composing when the user presses ESC",
+          (tester) async {
         await _pumpTestEditor(
           tester,
           MutableDocument(
@@ -471,7 +485,8 @@ void main() {
         text = SuperEditorInspector.findTextInParagraph("1");
         expect(
           text.getAttributionSpansInRange(
-            attributionFilter: (attribution) => attribution == actionTagComposingAttribution,
+            attributionFilter: (attribution) =>
+                attribution == actionTagComposingAttribution,
             range: const SpanRange(0, 7),
           ),
           isEmpty,
@@ -489,7 +504,8 @@ void main() {
         expect(text.text, "before /h");
         expect(
           text.getAttributionSpansInRange(
-            attributionFilter: (attribution) => attribution == actionTagComposingAttribution,
+            attributionFilter: (attribution) =>
+                attribution == actionTagComposingAttribution,
             range: const SpanRange(0, 8),
           ),
           isEmpty,
@@ -507,7 +523,8 @@ void main() {
         expect(text.text, "before /h ");
         expect(
           text.getAttributionSpansInRange(
-            attributionFilter: (attribution) => attribution == actionTagComposingAttribution,
+            attributionFilter: (attribution) =>
+                attribution == actionTagComposingAttribution,
             range: const SpanRange(0, 9),
           ),
           isEmpty,
@@ -518,7 +535,8 @@ void main() {
         );
       });
 
-      testWidgetsOnAllPlatforms("only notifies tag index listeners when tags change", (tester) async {
+      testWidgetsOnAllPlatforms(
+          "only notifies tag index listeners when tags change", (tester) async {
         final actionTagPlugin = ActionTagsPlugin();
 
         await _pumpTestEditor(
@@ -562,7 +580,8 @@ void main() {
     });
 
     group("submissions >", () {
-      testWidgetsOnAllPlatforms("at the beginning of a paragraph", (tester) async {
+      testWidgetsOnAllPlatforms("at the beginning of a paragraph",
+          (tester) async {
         await _pumpTestEditor(
           tester,
           singleParagraphEmptyDoc(),
@@ -609,7 +628,8 @@ void main() {
         expect(text.text, "before ");
         expect(
           text.getAttributionSpansInRange(
-            attributionFilter: (attribution) => attribution == actionTagComposingAttribution,
+            attributionFilter: (attribution) =>
+                attribution == actionTagComposingAttribution,
             range: const SpanRange(0, 6),
           ),
           isEmpty,
@@ -643,7 +663,8 @@ void main() {
         expect(text.text, "before  after");
         expect(
           text.getAttributionSpansInRange(
-            attributionFilter: (attribution) => attribution == actionTagComposingAttribution,
+            attributionFilter: (attribution) =>
+                attribution == actionTagComposingAttribution,
             range: const SpanRange(0, 12),
           ),
           isEmpty,
@@ -662,7 +683,8 @@ Future<TestDocumentContext> _pumpTestEditor(
   assert(tagRule == null || plugin == null,
       "You can provide a custom tagRule, or a custom ActionsTagPlugin, but not both");
 
-  final actionTagPlugin = plugin ?? ActionTagsPlugin(tagRule: tagRule ?? defaultActionTagRule);
+  final actionTagPlugin =
+      plugin ?? ActionTagsPlugin(tagRule: tagRule ?? defaultActionTagRule);
 
   return await tester //
       .createDocument()
@@ -678,7 +700,7 @@ Future<TestDocumentContext> _pumpTestEditor(
 
 ExecutionInstruction _submitOnEnter({
   required SuperEditorContext editContext,
-  required RawKeyEvent keyEvent,
+  required KeyEvent keyEvent,
 }) {
   if (keyEvent is KeyDownEvent) {
     return ExecutionInstruction.continueExecution;

@@ -470,9 +470,9 @@ class SuperAndroidTextFieldState extends State<SuperAndroidTextField>
   ///
   /// Some third party keyboards report backspace as a key press
   /// rather than a deletion delta, so we need to handle them manually
-  KeyEventResult _onKeyPressed(FocusNode focusNode, RawKeyEvent keyEvent) {
+  KeyEventResult _onKeyPressed(FocusNode focusNode, KeyEvent keyEvent) {
     _log.finer('_onKeyPressed - keyEvent: ${keyEvent.character}');
-    if (keyEvent is! RawKeyDownEvent) {
+    if (keyEvent is! KeyDownEvent) {
       _log.finer('_onKeyPressed - not a "down" event. Ignoring.');
       return KeyEventResult.ignored;
     }

@@ -1,8 +1,8 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
 import 'package:super_editor/src/infrastructure/platforms/platform.dart';
 
 enum ExecutionInstruction {
@@ -32,9 +32,10 @@ enum ExecutionInstruction {
   haltExecution,
 }
 
-extension PrimaryShortcutKey on RawKeyEvent {
+extension PrimaryShortcutKey on KeyEvent {
   bool get isPrimaryShortcutKeyPressed =>
-      (CurrentPlatform.isApple && isMetaPressed) || (!CurrentPlatform.isApple && isControlPressed);
+      (CurrentPlatform.isApple && HardwareKeyboard.instance.isMetaPressed) ||
+      (!CurrentPlatform.isApple && HardwareKeyboard.instance.isControlPressed);
 }
 
 /// Whether the given [character] should be ignored when it's received within
@@ -60,7 +61,9 @@ bool isKeyEventCharacterBlacklisted(String? character) {
 /// Examples of what's prohibited: "F1", "Scroll Lock"
 @visibleForTesting
 bool isCharacterBlacklisted(String character) {
-  return character.length > 1 && _isUpperCase(character.codeUnits.first) && _isAllAlphaNumeric(character.codeUnits);
+  return character.length > 1 &&
+      _isUpperCase(character.codeUnits.first) &&
+      _isAllAlphaNumeric(character.codeUnits);
 }
 
 const _ascii_A = 0x41;

@@ -2,7 +2,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:super_editor/super_editor.dart';
 
-import '../../test_tools_user_input.dart';
 import '../supereditor_test_tools.dart';
 
 void main() {
@@ -18,7 +17,8 @@ void main() {
           ],
         );
         final composer = MutableDocumentComposer();
-        final editor = createDefaultDocumentEditor(document: document, composer: composer);
+        final editor =
+            createDefaultDocumentEditor(document: document, composer: composer);
 
         final request = ToggleTextAttributionsRequest(
           documentRange: const DocumentSelection(
@@ -56,13 +56,10 @@ void main() {
         // Press just the meta key.
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
-          keyEvent: const FakeRawKeyDownEvent(
-            data: FakeRawKeyEventData(
-              logicalKey: LogicalKeyboardKey.meta,
-              physicalKey: PhysicalKeyboardKey.metaLeft,
-              isMetaPressed: true,
-              isModifierKeyPressed: false,
-            ),
+          keyEvent: const KeyDownEvent(
+            timeStamp: Duration.zero,
+            logicalKey: LogicalKeyboardKey.meta,
+            physicalKey: PhysicalKeyboardKey.metaLeft,
           ),
         );
 
@@ -72,13 +69,10 @@ void main() {
         // Press "a" + meta key
         result = anyCharacterToInsertInTextContent(
           editContext: editContext,
-          keyEvent: const FakeRawKeyDownEvent(
-            data: FakeRawKeyEventData(
-              logicalKey: LogicalKeyboardKey.keyA,
-              physicalKey: PhysicalKeyboardKey.keyA,
-              isMetaPressed: true,
-              isModifierKeyPressed: false,
-            ),
+          keyEvent: const KeyDownEvent(
+            timeStamp: Duration.zero,
+            logicalKey: LogicalKeyboardKey.keyA,
+            physicalKey: PhysicalKeyboardKey.keyA,
           ),
         );
 
@@ -92,11 +86,10 @@ void main() {
         // Try to type a character.
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
-          keyEvent: const FakeRawKeyDownEvent(
-            data: FakeRawKeyEventData(
-              logicalKey: LogicalKeyboardKey.keyA,
-              physicalKey: PhysicalKeyboardKey.keyA,
-            ),
+          keyEvent: const KeyDownEvent(
+            timeStamp: Duration.zero,
+            logicalKey: LogicalKeyboardKey.keyA,
+            physicalKey: PhysicalKeyboardKey.keyA,
           ),
         );
 
@@ -136,11 +129,10 @@ void main() {
         // Try to type a character.
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
-          keyEvent: const FakeRawKeyDownEvent(
-            data: FakeRawKeyEventData(
-              logicalKey: LogicalKeyboardKey.keyA,
-              physicalKey: PhysicalKeyboardKey.keyA,
-            ),
+          keyEvent: const KeyDownEvent(
+            timeStamp: Duration.zero,
+            logicalKey: LogicalKeyboardKey.keyA,
+            physicalKey: PhysicalKeyboardKey.keyA,
           ),
         );
 
@@ -173,11 +165,10 @@ void main() {
         // Try to type a character.
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
-          keyEvent: const FakeRawKeyDownEvent(
-            data: FakeRawKeyEventData(
-              logicalKey: LogicalKeyboardKey.keyA,
-              physicalKey: PhysicalKeyboardKey.keyA,
-            ),
+          keyEvent: const KeyDownEvent(
+            timeStamp: Duration.zero,
+            logicalKey: LogicalKeyboardKey.keyA,
+            physicalKey: PhysicalKeyboardKey.keyA,
           ),
         );
 
@@ -213,13 +204,10 @@ void main() {
         // Press the "alt" key
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
-          keyEvent: const FakeRawKeyDownEvent(
-            character: null,
-            data: FakeRawKeyEventData(
-              logicalKey: LogicalKeyboardKey.alt,
-              physicalKey: PhysicalKeyboardKey.altLeft,
-              isModifierKeyPressed: true,
-            ),
+          keyEvent: const KeyDownEvent(
+            timeStamp: Duration.zero,
+            logicalKey: LogicalKeyboardKey.alt,
+            physicalKey: PhysicalKeyboardKey.altLeft,
           ),
         );
 
@@ -229,12 +217,12 @@ void main() {
         // Press the "enter" key
         result = anyCharacterToInsertInTextContent(
           editContext: editContext,
-          keyEvent: const FakeRawKeyDownEvent(
-            character: '', // Empirically, pressing enter sends '' as the character instead of null
-            data: FakeRawKeyEventData(
-              logicalKey: LogicalKeyboardKey.enter,
-              physicalKey: PhysicalKeyboardKey.enter,
-            ),
+          keyEvent: const KeyDownEvent(
+            timeStamp: Duration.zero,
+            character:
+                '', // Empirically, pressing enter sends '' as the character instead of null
+            logicalKey: LogicalKeyboardKey.enter,
+            physicalKey: PhysicalKeyboardKey.enter,
           ),
         );
 
@@ -270,12 +258,11 @@ void main() {
         // Press the "a" key
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
-          keyEvent: const FakeRawKeyDownEvent(
+          keyEvent: const KeyDownEvent(
+            timeStamp: Duration.zero,
             character: 'a',
-            data: FakeRawKeyEventData(
-              logicalKey: LogicalKeyboardKey.keyA,
-              physicalKey: PhysicalKeyboardKey.keyA,
-            ),
+            logicalKey: LogicalKeyboardKey.keyA,
+            physicalKey: PhysicalKeyboardKey.keyA,
           ),
         );
 
@@ -315,12 +302,11 @@ void main() {
         // Type a non-English character
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
-          keyEvent: const FakeRawKeyDownEvent(
+          keyEvent: const KeyDownEvent(
+            timeStamp: Duration.zero,
             character: 'ß',
-            data: FakeRawKeyEventData(
-              logicalKey: LogicalKeyboardKey.keyA,
-              physicalKey: PhysicalKeyboardKey.keyA,
-            ),
+            logicalKey: LogicalKeyboardKey.keyA,
+            physicalKey: PhysicalKeyboardKey.keyA,
           ),
         );
 
@@ -385,21 +371,27 @@ void main() {
     group('TextNodeSelection', () {
       group('get base', () {
         test('preserves affinity', () {
-          const selectionWithUpstream = TextNodeSelection.collapsed(offset: 0, affinity: TextAffinity.upstream);
+          const selectionWithUpstream = TextNodeSelection.collapsed(
+              offset: 0, affinity: TextAffinity.upstream);
           expect(selectionWithUpstream.base.affinity, TextAffinity.upstream);
 
-          const selectionWithDownstream = TextNodeSelection.collapsed(offset: 0, affinity: TextAffinity.downstream);
-          expect(selectionWithDownstream.base.affinity, TextAffinity.downstream);
+          const selectionWithDownstream = TextNodeSelection.collapsed(
+              offset: 0, affinity: TextAffinity.downstream);
+          expect(
+              selectionWithDownstream.base.affinity, TextAffinity.downstream);
         });
       });
 
       group('get extent', () {
         test('preserves affinity', () {
-          const selectionWithUpstream = TextNodeSelection.collapsed(offset: 0, affinity: TextAffinity.upstream);
+          const selectionWithUpstream = TextNodeSelection.collapsed(
+              offset: 0, affinity: TextAffinity.upstream);
           expect(selectionWithUpstream.extent.affinity, TextAffinity.upstream);
 
-          const selectionWithDownstream = TextNodeSelection.collapsed(offset: 0, affinity: TextAffinity.downstream);
-          expect(selectionWithDownstream.extent.affinity, TextAffinity.downstream);
+          const selectionWithDownstream = TextNodeSelection.collapsed(
+              offset: 0, affinity: TextAffinity.downstream);
+          expect(
+              selectionWithDownstream.extent.affinity, TextAffinity.downstream);
         });
       });
     });
@@ -409,7 +401,8 @@ void main() {
 SuperEditorContext _createEditContext() {
   final document = MutableDocument();
   final composer = MutableDocumentComposer();
-  final documentEditor = createDefaultDocumentEditor(document: document, composer: composer);
+  final documentEditor =
+      createDefaultDocumentEditor(document: document, composer: composer);
   final fakeLayout = FakeDocumentLayout();
   return SuperEditorContext(
     editor: documentEditor,

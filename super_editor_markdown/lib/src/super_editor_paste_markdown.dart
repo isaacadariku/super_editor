@@ -6,13 +6,14 @@ import 'package:super_editor_markdown/src/markdown_to_document_parsing.dart';
 /// interpreting the clipboard content as Markdown.
 ExecutionInstruction pasteMarkdownOnCmdAndCtrlV({
   required SuperEditorContext editContext,
-  required RawKeyEvent keyEvent,
+  required KeyEvent keyEvent,
 }) {
-  if (keyEvent is! RawKeyDownEvent) {
+  if (keyEvent is! KeyDownEvent) {
     return ExecutionInstruction.continueExecution;
   }
 
-  if (!keyEvent.isPrimaryShortcutKeyPressed || keyEvent.logicalKey != LogicalKeyboardKey.keyV) {
+  if (!keyEvent.isPrimaryShortcutKeyPressed ||
+      keyEvent.logicalKey != LogicalKeyboardKey.keyV) {
     return ExecutionInstruction.continueExecution;
   }
   if (editContext.composer.selection == null) {
@@ -44,7 +45,8 @@ Future<void> pasteMarkdown({
 
   // Delete all currently selected content.
   if (!composer.selection!.isCollapsed) {
-    pastePosition = CommonEditorOperations.getDocumentPositionAfterExpandedDeletion(
+    pastePosition =
+        CommonEditorOperations.getDocumentPositionAfterExpandedDeletion(
       document: document,
       selection: composer.selection!,
     );
