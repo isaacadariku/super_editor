@@ -1,6 +1,7 @@
 import 'package:attributed_text/attributed_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:super_editor/src/core/document_composer.dart';
 import 'package:super_editor/src/core/edit_context.dart';
 import 'package:super_editor/src/core/editor.dart';
 import 'package:super_editor/src/default_editor/attributions.dart';
@@ -77,10 +78,7 @@ class ListItemNode extends TextNode {
 
   @override
   bool hasEquivalentContent(DocumentNode other) {
-    return other is ListItemNode &&
-        type == other.type &&
-        indent == other.indent &&
-        text == other.text;
+    return other is ListItemNode && type == other.type && indent == other.indent && text == other.text;
   }
 
   @override
@@ -107,8 +105,7 @@ class ListItemComponentBuilder implements ComponentBuilder {
   const ListItemComponentBuilder();
 
   @override
-  SingleColumnLayoutComponentViewModel? createViewModel(
-      Document document, DocumentNode node) {
+  SingleColumnLayoutComponentViewModel? createViewModel(Document document, DocumentNode node) {
     if (node is! ListItemNode) {
       return null;
     }
@@ -140,8 +137,8 @@ class ListItemComponentBuilder implements ComponentBuilder {
   }
 
   @override
-  Widget? createComponent(SingleColumnDocumentComponentContext componentContext,
-      SingleColumnLayoutComponentViewModel componentViewModel) {
+  Widget? createComponent(
+      SingleColumnDocumentComponentContext componentContext, SingleColumnLayoutComponentViewModel componentViewModel) {
     if (componentViewModel is! ListItemComponentViewModel) {
       return null;
     }
@@ -173,14 +170,13 @@ class ListItemComponentBuilder implements ComponentBuilder {
       );
     }
 
-    editorLayoutLog.warning(
-        "Tried to build a component for a list item view model without a list item type: $componentViewModel");
+    editorLayoutLog
+        .warning("Tried to build a component for a list item view model without a list item type: $componentViewModel");
     return null;
   }
 }
 
-class ListItemComponentViewModel extends SingleColumnLayoutComponentViewModel
-    with TextComponentViewModel {
+class ListItemComponentViewModel extends SingleColumnLayoutComponentViewModel with TextComponentViewModel {
   ListItemComponentViewModel({
     required String nodeId,
     double? maxWidth,
@@ -276,8 +272,8 @@ class ListItemComponentViewModel extends SingleColumnLayoutComponentViewModel
 /// Displays a un-ordered list item in a document.
 ///
 /// Supports various indentation levels, e.g., 1, 2, 3, ...
-class UnorderedListItemComponent extends StatelessWidget {
-  UnorderedListItemComponent({
+class UnorderedListItemComponent extends StatefulWidget {
+  const UnorderedListItemComponent({
     Key? key,
     required this.componentKey,
     required this.text,
@@ -310,6 +306,11 @@ class UnorderedListItemComponent extends StatelessWidget {
   final bool showComposingUnderline;
   final bool showDebugPaint;
 
+  @override
+  State<UnorderedListItemComponent> createState() => _UnorderedListItemComponentState();
+}
+
+class _UnorderedListItemComponentState extends State<UnorderedListItemComponent> {
   /// A [GlobalKey] that connects a [ProxyTextDocumentComponent] to its
   /// descendant [TextComponent].
   ///
@@ -317,22 +318,21 @@ class UnorderedListItemComponent extends StatelessWidget {
   /// in its subtree, but the proxy needs access to the [TextComponent] to provide
   /// access to text layout details.
   ///
-  /// This key doesn't need to be public because the given [componentKey]
+  /// This key doesn't need to be public because the given [widget.componentKey]
   /// provides clients with direct access to text layout queries, as well as
   /// standard [DocumentComponent] queries.
   final GlobalKey _innerTextComponentKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = styleBuilder({});
-    final indentSpace = indentCalculator(textStyle, indent);
+    final textStyle = widget.styleBuilder({});
+    final indentSpace = widget.indentCalculator(textStyle, widget.indent);
     final textScaler = MediaQuery.textScalerOf(context);
-    final lineHeight =
-        textScaler.scale(textStyle.fontSize! * (textStyle.height ?? 1.25));
+    final lineHeight = textScaler.scale(textStyle.fontSize! * (textStyle.height ?? 1.25));
     const manualVerticalAdjustment = 3.0;
 
     return ProxyTextDocumentComponent(
-      key: componentKey,
+      key: widget.componentKey,
       textComponentKey: _innerTextComponentKey,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,27 +341,25 @@ class UnorderedListItemComponent extends StatelessWidget {
             width: indentSpace,
             margin: const EdgeInsets.only(top: manualVerticalAdjustment),
             decoration: BoxDecoration(
-              border: showDebugPaint
-                  ? Border.all(width: 1, color: Colors.grey)
-                  : null,
+              border: widget.showDebugPaint ? Border.all(width: 1, color: Colors.grey) : null,
             ),
             child: SizedBox(
               height: lineHeight,
-              child: dotBuilder(context, this),
+              child: widget.dotBuilder(context, widget),
             ),
           ),
           Expanded(
             child: TextComponent(
               key: _innerTextComponentKey,
-              text: text,
-              textStyleBuilder: styleBuilder,
-              textSelection: textSelection,
+              text: widget.text,
+              textStyleBuilder: widget.styleBuilder,
+              textSelection: widget.textSelection,
               textScaler: textScaler,
-              selectionColor: selectionColor,
-              highlightWhenEmpty: highlightWhenEmpty,
-              composingRegion: composingRegion,
-              showComposingUnderline: showComposingUnderline,
-              showDebugPaint: showDebugPaint,
+              selectionColor: widget.selectionColor,
+              highlightWhenEmpty: widget.highlightWhenEmpty,
+              composingRegion: widget.composingRegion,
+              showComposingUnderline: widget.showComposingUnderline,
+              showDebugPaint: widget.showDebugPaint,
             ),
           ),
         ],
@@ -370,11 +368,9 @@ class UnorderedListItemComponent extends StatelessWidget {
   }
 }
 
-typedef UnorderedListItemDotBuilder = Widget Function(
-    BuildContext, UnorderedListItemComponent);
+typedef UnorderedListItemDotBuilder = Widget Function(BuildContext, UnorderedListItemComponent);
 
-Widget _defaultUnorderedListItemDotBuilder(
-    BuildContext context, UnorderedListItemComponent component) {
+Widget _defaultUnorderedListItemDotBuilder(BuildContext context, UnorderedListItemComponent component) {
   return Align(
     alignment: Alignment.centerRight,
     child: Container(
@@ -392,8 +388,8 @@ Widget _defaultUnorderedListItemDotBuilder(
 /// Displays an ordered list item in a document.
 ///
 /// Supports various indentation levels, e.g., 1, 2, 3, ...
-class OrderedListItemComponent extends StatelessWidget {
-  OrderedListItemComponent({
+class OrderedListItemComponent extends StatefulWidget {
+  const OrderedListItemComponent({
     Key? key,
     required this.componentKey,
     required this.listIndex,
@@ -428,6 +424,11 @@ class OrderedListItemComponent extends StatelessWidget {
   final bool showComposingUnderline;
   final bool showDebugPaint;
 
+  @override
+  State<OrderedListItemComponent> createState() => _OrderedListItemComponentState();
+}
+
+class _OrderedListItemComponentState extends State<OrderedListItemComponent> {
   /// A [GlobalKey] that connects a [ProxyTextDocumentComponent] to its
   /// descendant [TextComponent].
   ///
@@ -435,21 +436,20 @@ class OrderedListItemComponent extends StatelessWidget {
   /// in its subtree, but the proxy needs access to the [TextComponent] to provide
   /// access to text layout details.
   ///
-  /// This key doesn't need to be public because the given [componentKey]
+  /// This key doesn't need to be public because the given [widget.componentKey]
   /// provides clients with direct access to text layout queries, as well as
   /// standard [DocumentComponent] queries.
   final GlobalKey _innerTextComponentKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = styleBuilder({});
-    final indentSpace = indentCalculator(textStyle, indent);
+    final textStyle = widget.styleBuilder({});
+    final indentSpace = widget.indentCalculator(textStyle, widget.indent);
     final textScaler = MediaQuery.textScalerOf(context);
-    final lineHeight =
-        textScaler.scale(textStyle.fontSize! * (textStyle.height ?? 1.0));
+    final lineHeight = textScaler.scale(textStyle.fontSize! * (textStyle.height ?? 1.0));
 
     return ProxyTextDocumentComponent(
-      key: componentKey,
+      key: widget.componentKey,
       textComponentKey: _innerTextComponentKey,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -458,27 +458,25 @@ class OrderedListItemComponent extends StatelessWidget {
             width: indentSpace,
             height: lineHeight,
             decoration: BoxDecoration(
-              border: showDebugPaint
-                  ? Border.all(width: 1, color: Colors.grey)
-                  : null,
+              border: widget.showDebugPaint ? Border.all(width: 1, color: Colors.grey) : null,
             ),
             child: SizedBox(
               height: lineHeight,
-              child: numeralBuilder(context, this),
+              child: widget.numeralBuilder(context, widget),
             ),
           ),
           Expanded(
             child: TextComponent(
               key: _innerTextComponentKey,
-              text: text,
-              textStyleBuilder: styleBuilder,
-              textSelection: textSelection,
+              text: widget.text,
+              textStyleBuilder: widget.styleBuilder,
+              textSelection: widget.textSelection,
               textScaler: textScaler,
-              selectionColor: selectionColor,
-              highlightWhenEmpty: highlightWhenEmpty,
-              composingRegion: composingRegion,
-              showComposingUnderline: showComposingUnderline,
-              showDebugPaint: showDebugPaint,
+              selectionColor: widget.selectionColor,
+              highlightWhenEmpty: widget.highlightWhenEmpty,
+              composingRegion: widget.composingRegion,
+              showComposingUnderline: widget.showComposingUnderline,
+              showDebugPaint: widget.showDebugPaint,
             ),
           ),
         ],
@@ -487,15 +485,13 @@ class OrderedListItemComponent extends StatelessWidget {
   }
 }
 
-typedef OrderedListItemNumeralBuilder = Widget Function(
-    BuildContext, OrderedListItemComponent);
+typedef OrderedListItemNumeralBuilder = Widget Function(BuildContext, OrderedListItemComponent);
 
 double _defaultIndentCalculator(TextStyle textStyle, int indent) {
   return (textStyle.fontSize! * 0.60) * 4 * (indent + 1);
 }
 
-Widget _defaultOrderedListItemNumeralBuilder(
-    BuildContext context, OrderedListItemComponent component) {
+Widget _defaultOrderedListItemNumeralBuilder(BuildContext context, OrderedListItemComponent component) {
   return OverflowBox(
     maxWidth: double.infinity,
     maxHeight: double.infinity,
@@ -534,8 +530,7 @@ class IndentListItemCommand implements EditCommand {
     final node = document.getNodeById(nodeId);
     final listItem = node as ListItemNode;
     if (listItem.indent >= 6) {
-      _log.log('IndentListItemCommand',
-          'WARNING: Editor does not support an indent level beyond 6.');
+      _log.log('IndentListItemCommand', 'WARNING: Editor does not support an indent level beyond 6.');
       return;
     }
 
@@ -738,20 +733,19 @@ class SplitListItemCommand implements EditCommand {
   @override
   void execute(EditContext context, CommandExecutor executor) {
     final document = context.find<MutableDocument>(Editor.documentKey);
+    final composer = context.find<MutableDocumentComposer>(Editor.composerKey);
+
     final node = document.getNodeById(nodeId);
     final listItemNode = node as ListItemNode;
     final text = listItemNode.text;
     final startText = text.copyText(0, splitPosition.offset);
-    final endText = splitPosition.offset < text.length
-        ? text.copyText(splitPosition.offset)
-        : AttributedText();
+    final endText = splitPosition.offset < text.length ? text.copyText(splitPosition.offset) : AttributedText();
     _log.log('SplitListItemCommand', 'Splitting list item:');
     _log.log('SplitListItemCommand', ' - start text: "$startText"');
     _log.log('SplitListItemCommand', ' - end text: "$endText"');
 
     // Change the current node's content to just the text before the caret.
-    _log.log('SplitListItemCommand',
-        ' - changing the original list item text due to split');
+    _log.log('SplitListItemCommand', ' - changing the original list item text due to split');
     // TODO: figure out how node changes should work in terms of
     //       a DocumentEditorTransaction (#67)
     listItemNode.text = startText;
@@ -777,8 +771,11 @@ class SplitListItemCommand implements EditCommand {
       newNode: newNode,
     );
 
-    _log.log('SplitListItemCommand',
-        ' - inserted new node: ${newNode.id} after old one: ${node.id}');
+    // Clear the composing region to avoid keeping a region pointing to the
+    // node that was split.
+    composer.setComposingRegion(null);
+
+    _log.log('SplitListItemCommand', ' - inserted new node: ${newNode.id} after old one: ${node.id}');
 
     executor.logChanges([
       SplitListItemIntention.start(),
@@ -803,7 +800,7 @@ ExecutionInstruction tabToIndentListItem({
   required SuperEditorContext editContext,
   required KeyEvent keyEvent,
 }) {
-  if (keyEvent is! KeyDownEvent) {
+  if (keyEvent is! KeyDownEvent && keyEvent is! KeyRepeatEvent) {
     return ExecutionInstruction.continueExecution;
   }
 
@@ -816,16 +813,14 @@ ExecutionInstruction tabToIndentListItem({
 
   final wasIndented = editContext.commonOps.indentListItem();
 
-  return wasIndented
-      ? ExecutionInstruction.haltExecution
-      : ExecutionInstruction.continueExecution;
+  return wasIndented ? ExecutionInstruction.haltExecution : ExecutionInstruction.continueExecution;
 }
 
 ExecutionInstruction shiftTabToUnIndentListItem({
   required SuperEditorContext editContext,
   required KeyEvent keyEvent,
 }) {
-  if (keyEvent is! KeyDownEvent) {
+  if (keyEvent is! KeyDownEvent && keyEvent is! KeyRepeatEvent) {
     return ExecutionInstruction.continueExecution;
   }
 
@@ -838,16 +833,14 @@ ExecutionInstruction shiftTabToUnIndentListItem({
 
   final wasIndented = editContext.commonOps.unindentListItem();
 
-  return wasIndented
-      ? ExecutionInstruction.haltExecution
-      : ExecutionInstruction.continueExecution;
+  return wasIndented ? ExecutionInstruction.haltExecution : ExecutionInstruction.continueExecution;
 }
 
 ExecutionInstruction backspaceToUnIndentListItem({
   required SuperEditorContext editContext,
   required KeyEvent keyEvent,
 }) {
-  if (keyEvent is! KeyDownEvent) {
+  if (keyEvent is! KeyDownEvent && keyEvent is! KeyRepeatEvent) {
     return ExecutionInstruction.continueExecution;
   }
 
@@ -862,29 +855,24 @@ ExecutionInstruction backspaceToUnIndentListItem({
     return ExecutionInstruction.continueExecution;
   }
 
-  final node = editContext.document
-      .getNodeById(editContext.composer.selection!.extent.nodeId);
+  final node = editContext.document.getNodeById(editContext.composer.selection!.extent.nodeId);
   if (node is! ListItemNode) {
     return ExecutionInstruction.continueExecution;
   }
-  if ((editContext.composer.selection!.extent.nodePosition as TextPosition)
-          .offset >
-      0) {
+  if ((editContext.composer.selection!.extent.nodePosition as TextPosition).offset > 0) {
     return ExecutionInstruction.continueExecution;
   }
 
   final wasIndented = editContext.commonOps.unindentListItem();
 
-  return wasIndented
-      ? ExecutionInstruction.haltExecution
-      : ExecutionInstruction.continueExecution;
+  return wasIndented ? ExecutionInstruction.haltExecution : ExecutionInstruction.continueExecution;
 }
 
 ExecutionInstruction splitListItemWhenEnterPressed({
   required SuperEditorContext editContext,
   required KeyEvent keyEvent,
 }) {
-  if (keyEvent is! KeyDownEvent) {
+  if (keyEvent is! KeyDownEvent && keyEvent is! KeyRepeatEvent) {
     return ExecutionInstruction.continueExecution;
   }
 
@@ -892,14 +880,11 @@ ExecutionInstruction splitListItemWhenEnterPressed({
     return ExecutionInstruction.continueExecution;
   }
 
-  final node = editContext.document
-      .getNodeById(editContext.composer.selection!.extent.nodeId);
+  final node = editContext.document.getNodeById(editContext.composer.selection!.extent.nodeId);
   if (node is! ListItemNode) {
     return ExecutionInstruction.continueExecution;
   }
 
   final didSplitListItem = editContext.commonOps.insertBlockLevelNewline();
-  return didSplitListItem
-      ? ExecutionInstruction.haltExecution
-      : ExecutionInstruction.continueExecution;
+  return didSplitListItem ? ExecutionInstruction.haltExecution : ExecutionInstruction.continueExecution;
 }

@@ -702,7 +702,7 @@ ExecutionInstruction _submitOnEnter({
   required SuperEditorContext editContext,
   required KeyEvent keyEvent,
 }) {
-  if (keyEvent is KeyDownEvent) {
+  if (keyEvent is! KeyDownEvent && keyEvent is! KeyRepeatEvent) {
     return ExecutionInstruction.continueExecution;
   }
   if (keyEvent.logicalKey != LogicalKeyboardKey.enter) {

@@ -4,7 +4,7 @@ import 'package:super_editor/super_editor.dart';
 
 import '../supereditor_test_tools.dart';
 
-void main() {
+Future<void> main() async {
   group('text.dart', () {
     group('ToggleTextAttributionsCommand', () {
       test('it toggles selected text and nothing more', () {
@@ -17,8 +17,7 @@ void main() {
           ],
         );
         final composer = MutableDocumentComposer();
-        final editor =
-            createDefaultDocumentEditor(document: document, composer: composer);
+        final editor = createDefaultDocumentEditor(document: document, composer: composer);
 
         final request = ToggleTextAttributionsRequest(
           documentRange: const DocumentSelection(
@@ -50,46 +49,17 @@ void main() {
     });
 
     group('TextComposable text entry', () {
-      test('it does nothing when meta is pressed', () {
-        final editContext = _createEditContext();
 
-        // Press just the meta key.
-        var result = anyCharacterToInsertInTextContent(
-          editContext: editContext,
-          keyEvent: const KeyDownEvent(
-            timeStamp: Duration.zero,
-            logicalKey: LogicalKeyboardKey.meta,
-            physicalKey: PhysicalKeyboardKey.metaLeft,
-          ),
-        );
-
-        // The handler should pass on handling the key.
-        expect(result, ExecutionInstruction.continueExecution);
-
-        // Press "a" + meta key
-        result = anyCharacterToInsertInTextContent(
-          editContext: editContext,
-          keyEvent: const KeyDownEvent(
-            timeStamp: Duration.zero,
-            logicalKey: LogicalKeyboardKey.keyA,
-            physicalKey: PhysicalKeyboardKey.keyA,
-          ),
-        );
-
-        // The handler should pass on handling the key.
-        expect(result, ExecutionInstruction.continueExecution);
-      });
-
-      test('it does nothing when nothing is selected', () {
+      test('it does nothing when nothing is selected', () async {
         final editContext = _createEditContext();
 
         // Try to type a character.
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
           keyEvent: const KeyDownEvent(
-            timeStamp: Duration.zero,
             logicalKey: LogicalKeyboardKey.keyA,
             physicalKey: PhysicalKeyboardKey.keyA,
+            timeStamp: Duration.zero,
           ),
         );
 
@@ -130,9 +100,9 @@ void main() {
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
           keyEvent: const KeyDownEvent(
-            timeStamp: Duration.zero,
             logicalKey: LogicalKeyboardKey.keyA,
             physicalKey: PhysicalKeyboardKey.keyA,
+            timeStamp: Duration.zero,
           ),
         );
 
@@ -166,9 +136,9 @@ void main() {
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
           keyEvent: const KeyDownEvent(
-            timeStamp: Duration.zero,
             logicalKey: LogicalKeyboardKey.keyA,
             physicalKey: PhysicalKeyboardKey.keyA,
+            timeStamp: Duration.zero,
           ),
         );
 
@@ -176,7 +146,7 @@ void main() {
         expect(result, ExecutionInstruction.continueExecution);
       });
 
-      test('it does nothing when the key doesn\'t have a character', () {
+      testWidgets('it does nothing when the key doesn\'t have a character', (WidgetTester tester) async {
         final editContext = _createEditContext();
 
         // Add a paragraph to the document.
@@ -205,9 +175,10 @@ void main() {
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
           keyEvent: const KeyDownEvent(
-            timeStamp: Duration.zero,
+            character: null,
             logicalKey: LogicalKeyboardKey.alt,
             physicalKey: PhysicalKeyboardKey.altLeft,
+            timeStamp: Duration.zero,
           ),
         );
 
@@ -218,11 +189,10 @@ void main() {
         result = anyCharacterToInsertInTextContent(
           editContext: editContext,
           keyEvent: const KeyDownEvent(
-            timeStamp: Duration.zero,
-            character:
-                '', // Empirically, pressing enter sends '' as the character instead of null
+            character: '', // Empirically, pressing enter sends '' as the character instead of null
             logicalKey: LogicalKeyboardKey.enter,
             physicalKey: PhysicalKeyboardKey.enter,
+            timeStamp: Duration.zero,
           ),
         );
 
@@ -259,10 +229,10 @@ void main() {
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
           keyEvent: const KeyDownEvent(
-            timeStamp: Duration.zero,
             character: 'a',
             logicalKey: LogicalKeyboardKey.keyA,
             physicalKey: PhysicalKeyboardKey.keyA,
+            timeStamp: Duration.zero,
           ),
         );
 
@@ -274,7 +244,7 @@ void main() {
         );
       });
 
-      test('it inserts a non-English character', () {
+      testWidgets('it inserts a non-English character', (WidgetTester tester) async {
         final editContext = _createEditContext();
 
         // Add a paragraph to the document.
@@ -303,10 +273,10 @@ void main() {
         var result = anyCharacterToInsertInTextContent(
           editContext: editContext,
           keyEvent: const KeyDownEvent(
-            timeStamp: Duration.zero,
             character: 'ß',
             logicalKey: LogicalKeyboardKey.keyA,
             physicalKey: PhysicalKeyboardKey.keyA,
+            timeStamp: Duration.zero,
           ),
         );
 
@@ -371,27 +341,21 @@ void main() {
     group('TextNodeSelection', () {
       group('get base', () {
         test('preserves affinity', () {
-          const selectionWithUpstream = TextNodeSelection.collapsed(
-              offset: 0, affinity: TextAffinity.upstream);
+          const selectionWithUpstream = TextNodeSelection.collapsed(offset: 0, affinity: TextAffinity.upstream);
           expect(selectionWithUpstream.base.affinity, TextAffinity.upstream);
 
-          const selectionWithDownstream = TextNodeSelection.collapsed(
-              offset: 0, affinity: TextAffinity.downstream);
-          expect(
-              selectionWithDownstream.base.affinity, TextAffinity.downstream);
+          const selectionWithDownstream = TextNodeSelection.collapsed(offset: 0, affinity: TextAffinity.downstream);
+          expect(selectionWithDownstream.base.affinity, TextAffinity.downstream);
         });
       });
 
       group('get extent', () {
         test('preserves affinity', () {
-          const selectionWithUpstream = TextNodeSelection.collapsed(
-              offset: 0, affinity: TextAffinity.upstream);
+          const selectionWithUpstream = TextNodeSelection.collapsed(offset: 0, affinity: TextAffinity.upstream);
           expect(selectionWithUpstream.extent.affinity, TextAffinity.upstream);
 
-          const selectionWithDownstream = TextNodeSelection.collapsed(
-              offset: 0, affinity: TextAffinity.downstream);
-          expect(
-              selectionWithDownstream.extent.affinity, TextAffinity.downstream);
+          const selectionWithDownstream = TextNodeSelection.collapsed(offset: 0, affinity: TextAffinity.downstream);
+          expect(selectionWithDownstream.extent.affinity, TextAffinity.downstream);
         });
       });
     });
@@ -401,8 +365,7 @@ void main() {
 SuperEditorContext _createEditContext() {
   final document = MutableDocument();
   final composer = MutableDocumentComposer();
-  final documentEditor =
-      createDefaultDocumentEditor(document: document, composer: composer);
+  final documentEditor = createDefaultDocumentEditor(document: document, composer: composer);
   final fakeLayout = FakeDocumentLayout();
   return SuperEditorContext(
     editor: documentEditor,

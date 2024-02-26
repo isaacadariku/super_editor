@@ -43,18 +43,13 @@ class TaskNode extends TextNode {
 
   @override
   bool hasEquivalentContent(DocumentNode other) {
-    return other is TaskNode &&
-        isComplete == other.isComplete &&
-        text == other.text;
+    return other is TaskNode && isComplete == other.isComplete && text == other.text;
   }
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      super == other &&
-          other is TaskNode &&
-          runtimeType == other.runtimeType &&
-          isComplete == other.isComplete;
+      super == other && other is TaskNode && runtimeType == other.runtimeType && isComplete == other.isComplete;
 
   @override
   int get hashCode => super.hashCode ^ isComplete.hashCode;
@@ -82,8 +77,7 @@ class TaskComponentBuilder implements ComponentBuilder {
   final Editor _editor;
 
   @override
-  TaskComponentViewModel? createViewModel(
-      Document document, DocumentNode node) {
+  TaskComponentViewModel? createViewModel(Document document, DocumentNode node) {
     if (node is! TaskNode) {
       return null;
     }
@@ -107,8 +101,8 @@ class TaskComponentBuilder implements ComponentBuilder {
   }
 
   @override
-  Widget? createComponent(SingleColumnDocumentComponentContext componentContext,
-      SingleColumnLayoutComponentViewModel componentViewModel) {
+  Widget? createComponent(
+      SingleColumnDocumentComponentContext componentContext, SingleColumnLayoutComponentViewModel componentViewModel) {
     if (componentViewModel is! TaskComponentViewModel) {
       return null;
     }
@@ -126,8 +120,7 @@ class TaskComponentBuilder implements ComponentBuilder {
 /// various properties in the view model. For example, one phase applies
 /// all [StyleRule]s, and another phase configures content selection
 /// and caret appearance.
-class TaskComponentViewModel extends SingleColumnLayoutComponentViewModel
-    with TextComponentViewModel {
+class TaskComponentViewModel extends SingleColumnLayoutComponentViewModel with TextComponentViewModel {
   TaskComponentViewModel({
     required String nodeId,
     double? maxWidth,
@@ -193,7 +186,6 @@ class TaskComponentViewModel extends SingleColumnLayoutComponentViewModel
           other is TaskComponentViewModel &&
           runtimeType == other.runtimeType &&
           isComplete == other.isComplete &&
-          setComplete == other.setComplete &&
           text == other.text &&
           textDirection == other.textDirection &&
           textAlignment == other.textAlignment &&
@@ -207,7 +199,6 @@ class TaskComponentViewModel extends SingleColumnLayoutComponentViewModel
   int get hashCode =>
       super.hashCode ^
       isComplete.hashCode ^
-      setComplete.hashCode ^
       text.hashCode ^
       textDirection.hashCode ^
       textAlignment.hashCode ^
@@ -240,16 +231,14 @@ class TaskComponent extends StatefulWidget {
   State<TaskComponent> createState() => _TaskComponentState();
 }
 
-class _TaskComponentState extends State<TaskComponent>
-    with ProxyDocumentComponent<TaskComponent>, ProxyTextComposable {
+class _TaskComponentState extends State<TaskComponent> with ProxyDocumentComponent<TaskComponent>, ProxyTextComposable {
   final _textKey = GlobalKey();
 
   @override
   GlobalKey<State<StatefulWidget>> get childDocumentComponentKey => _textKey;
 
   @override
-  TextComposable get childTextComposable =>
-      childDocumentComponentKey.currentState as TextComposable;
+  TextComposable get childTextComposable => childDocumentComponentKey.currentState as TextComposable;
 
   /// Computes the [TextStyle] for this task's inner [TextComponent].
   TextStyle _computeStyles(Set<Attribution> attributions) {
@@ -259,8 +248,7 @@ class _TaskComponentState extends State<TaskComponent>
         ? style.copyWith(
             decoration: style.decoration == null
                 ? TextDecoration.lineThrough
-                : TextDecoration.combine(
-                    [TextDecoration.lineThrough, style.decoration!]),
+                : TextDecoration.combine([TextDecoration.lineThrough, style.decoration!]),
           )
         : style;
   }
@@ -301,13 +289,12 @@ ExecutionInstruction enterToInsertNewTask({
   required SuperEditorContext editContext,
   required KeyEvent keyEvent,
 }) {
-  if (keyEvent is! KeyDownEvent) {
+  if (keyEvent is! KeyDownEvent && keyEvent is! KeyRepeatEvent) {
     return ExecutionInstruction.continueExecution;
   }
 
   // We only care about ENTER.
-  if (keyEvent.logicalKey != LogicalKeyboardKey.enter &&
-      keyEvent.logicalKey != LogicalKeyboardKey.numpadEnter) {
+  if (keyEvent.logicalKey != LogicalKeyboardKey.enter && keyEvent.logicalKey != LogicalKeyboardKey.numpadEnter) {
     return ExecutionInstruction.continueExecution;
   }
 
@@ -323,8 +310,7 @@ ExecutionInstruction enterToInsertNewTask({
     return ExecutionInstruction.continueExecution;
   }
 
-  final splitOffset =
-      (selection.extent.nodePosition as TextNodePosition).offset;
+  final splitOffset = (selection.extent.nodePosition as TextNodePosition).offset;
 
   editContext.editor.execute([
     SplitExistingTaskRequest(
@@ -340,7 +326,7 @@ ExecutionInstruction backspaceToConvertTaskToParagraph({
   required SuperEditorContext editContext,
   required KeyEvent keyEvent,
 }) {
-  if (keyEvent is! KeyDownEvent) {
+  if (keyEvent is! KeyDownEvent && keyEvent is! KeyRepeatEvent) {
     return ExecutionInstruction.continueExecution;
   }
 
@@ -355,15 +341,12 @@ ExecutionInstruction backspaceToConvertTaskToParagraph({
     return ExecutionInstruction.continueExecution;
   }
 
-  final node = editContext.document
-      .getNodeById(editContext.composer.selection!.extent.nodeId);
+  final node = editContext.document.getNodeById(editContext.composer.selection!.extent.nodeId);
   if (node is! TaskNode) {
     return ExecutionInstruction.continueExecution;
   }
 
-  if ((editContext.composer.selection!.extent.nodePosition as TextPosition)
-          .offset >
-      0) {
+  if ((editContext.composer.selection!.extent.nodePosition as TextPosition).offset > 0) {
     // The selection isn't at the beginning.
     return ExecutionInstruction.continueExecution;
   }
@@ -401,8 +384,7 @@ class ChangeTaskCompletionCommand implements EditCommand {
 
   @override
   void execute(EditContext context, CommandExecutor executor) {
-    final taskNode =
-        context.find<MutableDocument>(Editor.documentKey).getNodeById(nodeId);
+    final taskNode = context.find<MutableDocument>(Editor.documentKey).getNodeById(nodeId);
     if (taskNode is! TaskNode) {
       return;
     }
@@ -527,8 +509,7 @@ class SplitExistingTaskCommand implements EditCommand {
   @override
   void execute(EditContext editContext, CommandExecutor executor) {
     final document = editContext.find<MutableDocument>(Editor.documentKey);
-    final composer =
-        editContext.find<MutableDocumentComposer>(Editor.composerKey);
+    final composer = editContext.find<MutableDocumentComposer>(Editor.composerKey);
     final selection = composer.selection;
 
     // We only care when the caret sits at the end of a TaskNode.
@@ -543,7 +524,7 @@ class SplitExistingTaskCommand implements EditCommand {
     }
 
     // Ensure the split offset is valid.
-    if (splitOffset < 0 || splitOffset > node.text.text.length + 1) {
+    if (splitOffset < 0 || splitOffset > node.text.length + 1) {
       return;
     }
 
@@ -554,8 +535,7 @@ class SplitExistingTaskCommand implements EditCommand {
     );
 
     // Remove the text after the caret from the currently selected TaskNode.
-    node.text = node.text.removeRegion(
-        startOffset: splitOffset, endOffset: node.text.text.length);
+    node.text = node.text.removeRegion(startOffset: splitOffset, endOffset: node.text.length);
 
     // Insert a new TextNode after the currently selected TaskNode.
     document.insertNodeAfter(existingNode: node, newNode: newTaskNode);
@@ -570,8 +550,7 @@ class SplitExistingTaskCommand implements EditCommand {
       ),
     );
 
-    composer.setSelectionWithReason(
-        newSelection, SelectionReason.userInteraction);
+    composer.setSelectionWithReason(newSelection, SelectionReason.userInteraction);
     composer.setComposingRegion(null);
 
     executor.logChanges([
@@ -580,8 +559,7 @@ class SplitExistingTaskCommand implements EditCommand {
         NodeChangeEvent(node.id),
       ),
       DocumentEdit(
-        NodeInsertedEvent(
-            newTaskNode.id, document.getNodeIndexById(newTaskNode.id)),
+        NodeInsertedEvent(newTaskNode.id, document.getNodeIndexById(newTaskNode.id)),
       ),
       SelectionChangeEvent(
         oldSelection: oldSelection,

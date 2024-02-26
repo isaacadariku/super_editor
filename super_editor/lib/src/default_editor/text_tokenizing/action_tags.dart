@@ -90,7 +90,7 @@ class ActionTagsPlugin extends SuperEditorPlugin {
     required SuperEditorContext editContext,
     required KeyEvent keyEvent,
   }) {
-    if (keyEvent is KeyDownEvent) {
+    if (keyEvent is KeyDownEvent || keyEvent is KeyRepeatEvent) {
       return ExecutionInstruction.continueExecution;
     }
 
@@ -135,8 +135,7 @@ class SubmitComposingActionTagCommand implements EditCommand {
       nodeId: composer.selection!.extent.nodeId,
       text: textNode.text,
       expansionPosition: extentPosition,
-      isTokenCandidate: (attributions) =>
-          !attributions.contains(actionTagCancelledAttribution),
+      isTokenCandidate: (attributions) => !attributions.contains(actionTagCancelledAttribution),
     );
 
     if (tagAroundPosition == null) {
@@ -155,8 +154,7 @@ class SubmitComposingActionTagCommand implements EditCommand {
     );
     executor.executeCommand(
       ChangeSelectionCommand(
-        DocumentSelection.collapsed(
-            position: tagAroundPosition.indexedTag.start),
+        DocumentSelection.collapsed(position: tagAroundPosition.indexedTag.start),
         SelectionChangeType.deleteContent,
         SelectionReason.userInteraction,
       ),
@@ -179,9 +177,7 @@ class CancelComposingActionTagRequest implements EditRequest {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CancelComposingActionTagRequest &&
-          runtimeType == other.runtimeType &&
-          tagRule == other.tagRule;
+      other is CancelComposingActionTagRequest && runtimeType == other.runtimeType && tagRule == other.tagRule;
 
   @override
   int get hashCode => tagRule.hashCode;
@@ -202,8 +198,7 @@ class CancelComposingActionTagCommand implements EditCommand {
       // There shouldn't be a composing action tag without a selection. Either way,
       // we can't find the desired composing action tag without a selection position
       // to guide us. Fizzle.
-      editorActionTagsLog.warning(
-          "Tried to cancel a composing action tag, but there's no user selection.");
+      editorActionTagsLog.warning("Tried to cancel a composing action tag, but there's no user selection.");
       return;
     }
 
@@ -220,8 +215,7 @@ class CancelComposingActionTagCommand implements EditCommand {
         nodeId: textNode.id,
         text: textNode.text,
         expansionPosition: base.nodePosition as TextNodePosition,
-        isTokenCandidate: (tokenAttributions) =>
-            tokenAttributions.contains(actionTagComposingAttribution),
+        isTokenCandidate: (tokenAttributions) => tokenAttributions.contains(actionTagComposingAttribution),
       );
     }
     if (composingToken == null && extent.nodePosition is TextNodePosition) {
@@ -231,8 +225,7 @@ class CancelComposingActionTagCommand implements EditCommand {
         nodeId: textNode.id,
         text: textNode.text,
         expansionPosition: base.nodePosition as TextNodePosition,
-        isTokenCandidate: (tokenAttributions) =>
-            tokenAttributions.contains(actionTagComposingAttribution),
+        isTokenCandidate: (tokenAttributions) => tokenAttributions.contains(actionTagComposingAttribution),
       );
     }
 
@@ -278,11 +271,9 @@ class ActionTagComposingReaction implements EditReaction {
   IndexedTag? _composingTag;
 
   @override
-  void react(EditContext editorContext, RequestDispatcher requestDispatcher,
-      List<EditEvent> changeList) {
+  void react(EditContext editorContext, RequestDispatcher requestDispatcher, List<EditEvent> changeList) {
     final document = editorContext.find<MutableDocument>(Editor.documentKey);
-    final composer =
-        editorContext.find<MutableDocumentComposer>(Editor.composerKey);
+    final composer = editorContext.find<MutableDocumentComposer>(Editor.composerKey);
 
     _composingTag = editorContext.composingActionTag.value;
 
@@ -310,8 +301,7 @@ class ActionTagComposingReaction implements EditReaction {
         nodeId: textNode.id,
         text: textNode.text,
         expansionPosition: base.nodePosition as TextNodePosition,
-        isTokenCandidate: (attributions) =>
-            !attributions.contains(actionTagCancelledAttribution),
+        isTokenCandidate: (attributions) => !attributions.contains(actionTagCancelledAttribution),
       );
     }
     if (tagAroundPosition == null && extent.nodePosition is TextNodePosition) {
@@ -321,8 +311,7 @@ class ActionTagComposingReaction implements EditReaction {
         nodeId: textNode.id,
         text: textNode.text,
         expansionPosition: base.nodePosition as TextNodePosition,
-        isTokenCandidate: (attributions) =>
-            !attributions.contains(actionTagCancelledAttribution),
+        isTokenCandidate: (attributions) => !attributions.contains(actionTagCancelledAttribution),
       );
     }
 
@@ -340,8 +329,7 @@ class ActionTagComposingReaction implements EditReaction {
 
   /// Finds all cancelled action tags across all changed text nodes in [changeList] and corrects
   /// any invalid attribution bounds that may have been introduced by edits.
-  void _healCancelledTags(RequestDispatcher requestDispatcher,
-      MutableDocument document, List<EditEvent> changeList) {
+  void _healCancelledTags(RequestDispatcher requestDispatcher, MutableDocument document, List<EditEvent> changeList) {
     final healChangeRequests = <EditRequest>[];
 
     for (final event in changeList) {
@@ -370,18 +358,16 @@ class ActionTagComposingReaction implements EditReaction {
     requestDispatcher.execute(healChangeRequests);
   }
 
-  List<EditRequest> _healCancelledTagsInTextNode(
-      RequestDispatcher requestDispatcher, TextNode node) {
+  List<EditRequest> _healCancelledTagsInTextNode(RequestDispatcher requestDispatcher, TextNode node) {
     final cancelledTagRanges = node.text.getAttributionSpansInRange(
       attributionFilter: (a) => a == actionTagCancelledAttribution,
-      range: SpanRange(0, node.text.text.length - 1),
+      range: SpanRange(0, node.text.length - 1),
     );
 
     final changeRequests = <EditRequest>[];
 
     for (final range in cancelledTagRanges) {
-      final cancelledText = node.text.text.substring(
-          range.start, range.end + 1); // +1 because substring is exclusive
+      final cancelledText = node.text.substring(range.start, range.end + 1); // +1 because substring is exclusive
       if (cancelledText == _tagRule.trigger) {
         // This is a legitimate cancellation attribution.
         continue;
@@ -411,8 +397,7 @@ class ActionTagComposingReaction implements EditReaction {
     return changeRequests;
   }
 
-  void _updateComposingTag(
-      RequestDispatcher requestDispatcher, IndexedTag newTag) {
+  void _updateComposingTag(RequestDispatcher requestDispatcher, IndexedTag newTag) {
     final oldComposingTag = _composingTag;
     _composingTag = newTag;
 
@@ -455,8 +440,7 @@ class ActionTagComposingReaction implements EditReaction {
         documentRange: DocumentSelection(
           base: composingTag.start,
           extent: composingTag.start.copyWith(
-            nodePosition:
-                TextNodePosition(offset: composingTag.startOffset + 1),
+            nodePosition: TextNodePosition(offset: composingTag.startOffset + 1),
           ),
         ),
         attributions: {actionTagCancelledAttribution},
@@ -468,16 +452,14 @@ class ActionTagComposingReaction implements EditReaction {
 const _composingActionTagKey = "composing_action_tag";
 
 extension on EditContext {
-  ComposingActionTag get composingActionTag =>
-      find<ComposingActionTag>(_composingActionTagKey);
+  ComposingActionTag get composingActionTag => find<ComposingActionTag>(_composingActionTagKey);
 }
 
 class ComposingActionTag with Editable {
   IndexedTag? value;
 }
 
-typedef OnUpdateComposingActionTag = void Function(
-    IndexedTag? composingActionTag);
+typedef OnUpdateComposingActionTag = void Function(IndexedTag? composingActionTag);
 
 /// An attribution for an action tag that's currently being composed.
 const actionTagComposingAttribution = NamedAttribution("action-tag-composing");

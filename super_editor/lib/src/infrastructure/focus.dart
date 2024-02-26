@@ -18,15 +18,16 @@ class NonReparentingFocus extends StatefulWidget {
   const NonReparentingFocus({
     Key? key,
     required this.focusNode,
-    this.onKey,
+    this.onKeyEvent,
     required this.child,
   }) : super(key: key);
 
   /// The [FocusNode] that sends key events to [onKey].
   final FocusNode focusNode;
 
-  /// The callback invoked whenever [focusNode] receives key events.
-  final FocusOnKeyEventCallback? onKey;
+
+  /// The callback invoked whenever [focusNode] receives [KeyEvent] events.
+  final FocusOnKeyEventCallback? onKeyEvent;
 
   /// The child of this widget.
   final Widget child;
@@ -41,8 +42,7 @@ class _NonReparentingFocusState extends State<NonReparentingFocus> {
   @override
   void initState() {
     super.initState();
-    _keyboardFocusAttachment =
-        widget.focusNode.attach(context, onKeyEvent: _onKey);
+    _keyboardFocusAttachment = widget.focusNode.attach(context, onKeyEvent: _onKeyEvent);
   }
 
   @override
@@ -57,8 +57,7 @@ class _NonReparentingFocusState extends State<NonReparentingFocus> {
 
     if (widget.focusNode != oldWidget.focusNode) {
       _keyboardFocusAttachment.detach();
-      _keyboardFocusAttachment =
-          widget.focusNode.attach(context, onKeyEvent: widget.onKey);
+      _keyboardFocusAttachment = widget.focusNode.attach(context, onKeyEvent: _onKeyEvent);
       _reparentIfMissingParent();
     }
   }
@@ -75,8 +74,8 @@ class _NonReparentingFocusState extends State<NonReparentingFocus> {
     }
   }
 
-  KeyEventResult _onKey(FocusNode focusNode, KeyEvent event) {
-    return widget.onKey?.call(focusNode, event) ?? KeyEventResult.ignored;
+  KeyEventResult _onKeyEvent(FocusNode focusNode, KeyEvent event) {
+    return widget.onKeyEvent?.call(focusNode, event) ?? KeyEventResult.ignored;
   }
 
   @override
@@ -112,7 +111,7 @@ class FocusWithCustomParent extends StatefulWidget {
     this.autofocus = false,
     this.onFocusChange,
     FocusOnKeyEventCallback? onKeyEvent,
-    FocusOnKeyEventCallback? onKey,
+    FocusOnKeyCallback? onKey,
     bool? canRequestFocus,
     bool? skipTraversal,
     bool? descendantsAreFocusable,
@@ -193,8 +192,7 @@ class FocusWithCustomParent extends StatefulWidget {
   /// keyboards in general. For text input, consider [TextField],
   /// [EditableText], or [CupertinoTextField] instead, which do support these
   /// things.
-  FocusOnKeyEventCallback? get onKeyEvent =>
-      _onKeyEvent ?? focusNode?.onKeyEvent;
+  FocusOnKeyEventCallback? get onKeyEvent => _onKeyEvent ?? focusNode?.onKeyEvent;
   final FocusOnKeyEventCallback? _onKeyEvent;
 
   /// A handler for keys that are pressed when this object or one of its
@@ -213,8 +211,8 @@ class FocusWithCustomParent extends StatefulWidget {
   /// keyboards in general. For text input, consider [TextField],
   /// [EditableText], or [CupertinoTextField] instead, which do support these
   /// things.
-  FocusOnKeyEventCallback? get onKey => _onKey ?? focusNode?.onKeyEvent;
-  final FocusOnKeyEventCallback? _onKey;
+  FocusOnKeyCallback? get onKey => _onKey ?? focusNode?.onKey;
+  final FocusOnKeyCallback? _onKey;
 
   /// {@template flutter.widgets.Focus.canRequestFocus}
   /// If true, this widget may request the primary focus.
@@ -237,8 +235,7 @@ class FocusWithCustomParent extends StatefulWidget {
   /// * [FocusTraversalPolicy], a class that can be extended to describe a
   ///   traversal policy.
   /// {@endtemplate}
-  bool get canRequestFocus =>
-      _canRequestFocus ?? focusNode?.canRequestFocus ?? true;
+  bool get canRequestFocus => _canRequestFocus ?? focusNode?.canRequestFocus ?? true;
   final bool? _canRequestFocus;
 
   /// Sets the [FocusNode.skipTraversal] flag on the focus node so that it won't
@@ -282,8 +279,7 @@ class FocusWithCustomParent extends StatefulWidget {
   ///   `descendantsAreFocusable` parameter to conditionally block focus for a
   ///   subtree.
   /// {@endtemplate}
-  bool get descendantsAreFocusable =>
-      _descendantsAreFocusable ?? focusNode?.descendantsAreFocusable ?? true;
+  bool get descendantsAreFocusable => _descendantsAreFocusable ?? focusNode?.descendantsAreFocusable ?? true;
   final bool? _descendantsAreFocusable;
 
   /// {@template flutter.widgets.Focus.descendantsAreTraversable}
@@ -307,10 +303,7 @@ class FocusWithCustomParent extends StatefulWidget {
   ///   `descendantsAreFocusable` parameter to conditionally block focus for a
   ///   subtree.
   /// {@endtemplate}
-  bool get descendantsAreTraversable =>
-      _descendantsAreTraversable ??
-      focusNode?.descendantsAreTraversable ??
-      true;
+  bool get descendantsAreTraversable => _descendantsAreTraversable ?? focusNode?.descendantsAreTraversable ?? true;
   final bool? _descendantsAreTraversable;
 
   /// {@template flutter.widgets.Focus.includeSemantics}
@@ -356,8 +349,7 @@ class FocusWithCustomParent extends StatefulWidget {
   ///  * [maybeOf], which is similar to this function, but will return null
   ///    instead of throwing if it doesn't find a [Focus] node.
   static FocusNode of(BuildContext context, {bool scopeOk = false}) {
-    final _FocusMarker? marker =
-        context.dependOnInheritedWidgetOfExactType<_FocusMarker>();
+    final _FocusMarker? marker = context.dependOnInheritedWidgetOfExactType<_FocusMarker>();
     final FocusNode? node = marker?.notifier;
     assert(() {
       if (node == null) {
@@ -407,8 +399,7 @@ class FocusWithCustomParent extends StatefulWidget {
   ///  * [of], which is similar to this function, but will throw an exception if
   ///    it doesn't find a [Focus] node instead of returning null.
   static FocusNode? maybeOf(BuildContext context, {bool scopeOk = false}) {
-    final _FocusMarker? marker =
-        context.dependOnInheritedWidgetOfExactType<_FocusMarker>();
+    final _FocusMarker? marker = context.dependOnInheritedWidgetOfExactType<_FocusMarker>();
     final FocusNode? node = marker?.notifier;
     if (node == null) {
       return null;
@@ -431,28 +422,20 @@ class FocusWithCustomParent extends StatefulWidget {
   ///
   /// Calling this function creates a dependency that will rebuild the given
   /// context when the focus changes.
-  static bool isAt(BuildContext context) =>
-      FocusWithCustomParent.maybeOf(context)?.hasFocus ?? false;
+  static bool isAt(BuildContext context) => FocusWithCustomParent.maybeOf(context)?.hasFocus ?? false;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
+    properties.add(StringProperty('debugLabel', debugLabel, defaultValue: null));
+    properties.add(FlagProperty('autofocus', value: autofocus, ifTrue: 'AUTOFOCUS', defaultValue: false));
     properties
-        .add(StringProperty('debugLabel', debugLabel, defaultValue: null));
-    properties.add(FlagProperty('autofocus',
-        value: autofocus, ifTrue: 'AUTOFOCUS', defaultValue: false));
-    properties.add(FlagProperty('canRequestFocus',
-        value: canRequestFocus, ifFalse: 'NOT FOCUSABLE', defaultValue: false));
+        .add(FlagProperty('canRequestFocus', value: canRequestFocus, ifFalse: 'NOT FOCUSABLE', defaultValue: false));
     properties.add(FlagProperty('descendantsAreFocusable',
-        value: descendantsAreFocusable,
-        ifFalse: 'DESCENDANTS UNFOCUSABLE',
-        defaultValue: true));
+        value: descendantsAreFocusable, ifFalse: 'DESCENDANTS UNFOCUSABLE', defaultValue: true));
     properties.add(FlagProperty('descendantsAreTraversable',
-        value: descendantsAreTraversable,
-        ifFalse: 'DESCENDANTS UNTRAVERSABLE',
-        defaultValue: true));
-    properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode,
-        defaultValue: null));
+        value: descendantsAreTraversable, ifFalse: 'DESCENDANTS UNTRAVERSABLE', defaultValue: true));
+    properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode, defaultValue: null));
   }
 
   @override
@@ -493,7 +476,7 @@ class _FocusWithCustomParentState extends State<FocusWithCustomParent> {
     _descendantsWereFocusable = focusNode.descendantsAreFocusable;
     _descendantsWereTraversable = focusNode.descendantsAreTraversable;
     _hadPrimaryFocus = focusNode.hasPrimaryFocus;
-    _focusAttachment = focusNode.attach(context, onKeyEvent: widget.onKeyEvent)
+    _focusAttachment = focusNode.attach(context, onKeyEvent: widget.onKeyEvent, onKey: widget.onKey)
       ..reparent(parent: widget.parentFocusNode);
 
     // Add listener even if the _internalNode existed before, since it should
@@ -534,8 +517,8 @@ class _FocusWithCustomParentState extends State<FocusWithCustomParent> {
 
     if (oldWidget.focusNode == widget.focusNode) {
       if (!widget._usingExternalFocus) {
-        if (widget.onKey != focusNode.onKeyEvent) {
-          focusNode.onKeyEvent = widget.onKey;
+        if (widget.onKey != focusNode.onKey) {
+          focusNode.onKey = widget.onKey;
         }
         if (widget.onKeyEvent != focusNode.onKeyEvent) {
           focusNode.onKeyEvent = widget.onKeyEvent;
