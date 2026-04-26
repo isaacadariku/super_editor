@@ -1,16 +1,16 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_editor/src/infrastructure/_logging.dart';
+import 'package:super_editor/src/infrastructure/document_gestures.dart';
 import 'package:super_editor/src/infrastructure/documents/document_scroller.dart';
 import 'package:super_editor/src/infrastructure/flutter/build_context.dart';
 import 'package:super_editor/src/infrastructure/flutter/flutter_scheduler.dart';
 import 'package:super_editor/src/infrastructure/flutter/material_scrollbar.dart';
 import 'package:super_editor/src/infrastructure/scrolling_diagnostics/_scrolling_minimap.dart';
-
-import '../infrastructure/document_gestures.dart';
 
 /// Scroller for a document.
 ///
@@ -31,6 +31,7 @@ class DocumentScrollable extends StatefulWidget {
     required this.autoScroller,
     this.scrollController,
     this.scroller,
+    this.isScribbleInProgress,
     this.scrollingMinimapId,
     this.showDebugPaint = false,
     required this.shrinkWrap,
@@ -52,6 +53,13 @@ class DocumentScrollable extends StatefulWidget {
   /// the scroll offset.
   final DocumentScroller? scroller;
 
+  /// A listenable that reports whether a Scribble (Apple Pencil) or stylus
+  /// writing interaction is currently in progress.
+  ///
+  /// When scribble is active, touch/stylus scrolling is disabled to prevent
+  /// the scroll view from stealing the scribble gesture.
+  final ValueListenable<bool>? isScribbleInProgress;
+
   /// ID that this widget's scrolling system registers with an ancestor
   /// [ScrollingMinimaps] to report scrolling diagnostics for debugging.
   final String? scrollingMinimapId;
@@ -71,7 +79,8 @@ class DocumentScrollable extends StatefulWidget {
   State<DocumentScrollable> createState() => _DocumentScrollableState();
 }
 
-class _DocumentScrollableState extends State<DocumentScrollable> with SingleTickerProviderStateMixin {
+class _DocumentScrollableState extends State<DocumentScrollable>
+    with SingleTickerProviderStateMixin {
   // The ScrollController that's used when we install our own Scrollable.
   late ScrollController _scrollController;
   // The ScrollPosition used when there's an ancestor Scrollable.
@@ -108,7 +117,8 @@ class _DocumentScrollableState extends State<DocumentScrollable> with SingleTick
       _debugInstrumentation = ScrollableInstrumentation()
         ..viewport.value = Scrollable.of(context).context
         ..scrollPosition.value = Scrollable.of(context).position;
-      ScrollingMinimaps.of(context)?.put(widget.scrollingMinimapId!, _debugInstrumentation);
+      ScrollingMinimaps.of(context)
+          ?.put(widget.scrollingMinimapId!, _debugInstrumentation);
     }
   }
 
@@ -166,8 +176,9 @@ class _DocumentScrollableState extends State<DocumentScrollable> with SingleTick
   /// widget includes a `ScrollView` and this `State`'s render object
   /// is the viewport `RenderBox`.
   RenderBox get _viewport =>
-      (context.findAncestorScrollableWithVerticalScroll?.context.findRenderObject() ?? context.findRenderObject())
-          as RenderBox;
+      (context.findAncestorScrollableWithVerticalScroll?.context
+              .findRenderObject() ??
+          context.findRenderObject()) as RenderBox;
 
   /// Returns the `ScrollPosition` that controls the scroll offset of
   /// this widget.
@@ -179,7 +190,8 @@ class _DocumentScrollableState extends State<DocumentScrollable> with SingleTick
   /// If this widget doesn't have an ancestor `Scrollable`, then this
   /// widget includes a `ScrollView` and the `ScrollView`'s position
   /// is returned.
-  ScrollPosition get _scrollPosition => _ancestorScrollPosition ?? _scrollController.position;
+  ScrollPosition get _scrollPosition =>
+      _ancestorScrollPosition ?? _scrollController.position;
 
   @override
   Widget build(BuildContext context) {
@@ -205,16 +217,46 @@ class _DocumentScrollableState extends State<DocumentScrollable> with SingleTick
     required Widget child,
   }) {
     final scrollBehavior = ScrollConfiguration.of(context);
+
+    Widget scrollView = CustomScrollView(
+      controller: _scrollController,
+      shrinkWrap: widget.shrinkWrap,
+      slivers: [child],
+    );
+
+    // When a Scribble/stylus writing interaction is in progress, disable
+    // touch scrolling so the scroll view doesn't steal the gesture from
+    // the IME's scribble handler.
+    if (widget.isScribbleInProgress != null) {
+      scrollView = ValueListenableBuilder<bool>(
+        valueListenable: widget.isScribbleInProgress!,
+        child: scrollView,
+        builder: (context, isScribbling, scrollViewChild) {
+          if (isScribbling) {
+            return ScrollConfiguration(
+              behavior: scrollBehavior.copyWith(
+                scrollbars: false,
+                physics: const NeverScrollableScrollPhysics(),
+              ),
+              child: scrollViewChild!,
+            );
+          }
+          return ScrollConfiguration(
+            behavior: scrollBehavior.copyWith(scrollbars: false),
+            child: scrollViewChild!,
+          );
+        },
+      );
+    } else {
+      scrollView = ScrollConfiguration(
+        behavior: scrollBehavior.copyWith(scrollbars: false),
+        child: scrollView,
+      );
+    }
+
     return _maybeBuildScrollbar(
       behavior: scrollBehavior,
-      child: ScrollConfiguration(
-        behavior: scrollBehavior.copyWith(scrollbars: false),
-        child: CustomScrollView(
-          controller: _scrollController,
-          shrinkWrap: widget.shrinkWrap,
-          slivers: [child],
-        ),
-      ),
+      child: scrollView,
     );
   }
 
@@ -370,8 +412,8 @@ class AutoScrollController with ChangeNotifier {
   ///
   /// A [vsync] is needed to create a [Ticker], which is used to animate
   /// auto-scrolling.
-  void attachScrollable(
-      TickerProvider vsync, ViewportResolver viewportResolver, ScrollPositionResolver scrollPositionResolver) {
+  void attachScrollable(TickerProvider vsync, ViewportResolver viewportResolver,
+      ScrollPositionResolver scrollPositionResolver) {
     detachScrollable();
     _ticker = vsync.createTicker(_onTick);
     _getViewport = viewportResolver;
@@ -424,7 +466,8 @@ class AutoScrollController with ChangeNotifier {
     }
 
     scrollPosition.jumpTo(
-      (scrollPosition.pixels + delta).clamp(0.0, scrollPosition.maxScrollExtent),
+      (scrollPosition.pixels + delta)
+          .clamp(0.0, scrollPosition.maxScrollExtent),
     );
   }
 
@@ -454,7 +497,8 @@ class AutoScrollController with ChangeNotifier {
     }
 
     if (pos is ScrollPositionWithSingleContext) {
-      if (pos.pixels > pos.minScrollExtent && pos.pixels < pos.maxScrollExtent) {
+      if (pos.pixels > pos.minScrollExtent &&
+          pos.pixels < pos.maxScrollExtent) {
         pos.goIdle();
       }
     }
@@ -482,20 +526,25 @@ class AutoScrollController with ChangeNotifier {
 
     final beyondTopExtent = min(selectionExtentRectInViewport.top, 0).abs();
 
-    final beyondBottomExtent = max(selectionExtentRectInViewport.bottom - viewportBox.size.height, 0);
+    final beyondBottomExtent =
+        max(selectionExtentRectInViewport.bottom - viewportBox.size.height, 0);
 
     editorScrollingLog.finest('Ensuring extent is visible.');
     editorScrollingLog.finest(' - viewport size: ${viewportBox.size}');
-    editorScrollingLog.finest(' - scroll controller offset: ${scrollPosition.pixels}');
-    editorScrollingLog.finest(' - selection extent rect in viewport: $selectionExtentRectInViewport');
+    editorScrollingLog
+        .finest(' - scroll controller offset: ${scrollPosition.pixels}');
+    editorScrollingLog.finest(
+        ' - selection extent rect in viewport: $selectionExtentRectInViewport');
     editorScrollingLog.finest(' - beyond top: $beyondTopExtent');
     editorScrollingLog.finest(' - beyond bottom: $beyondBottomExtent');
 
     late double newScrollPosition;
     if (beyondTopExtent > 0) {
-      newScrollPosition = (scrollPosition.pixels - beyondTopExtent).clamp(0.0, scrollPosition.maxScrollExtent);
+      newScrollPosition = (scrollPosition.pixels - beyondTopExtent)
+          .clamp(0.0, scrollPosition.maxScrollExtent);
     } else if (beyondBottomExtent > 0) {
-      newScrollPosition = (beyondBottomExtent + scrollPosition.pixels).clamp(0.0, scrollPosition.maxScrollExtent);
+      newScrollPosition = (beyondBottomExtent + scrollPosition.pixels)
+          .clamp(0.0, scrollPosition.maxScrollExtent);
     } else {
       return;
     }
@@ -589,19 +638,22 @@ class AutoScrollController with ChangeNotifier {
     if (_autoScrollGlobalRegion!.top < globalAutoScrollRect.top) {
       _scrollUp(globalAutoScrollRect.top - _autoScrollGlobalRegion!.top);
     } else if (_autoScrollGlobalRegion!.bottom > globalAutoScrollRect.bottom) {
-      _scrollDown(_autoScrollGlobalRegion!.bottom - globalAutoScrollRect.bottom);
+      _scrollDown(
+          _autoScrollGlobalRegion!.bottom - globalAutoScrollRect.bottom);
     }
 
     // We have to re-calculate the drag end in the doc (instead of
     // caching the value during the pan update) because the position
     // in the document is impacted by auto-scrolling behavior.
-    _deltaWhileAutoScrolling = _autoScrollingStartOffset! - _getScrollPosition!().pixels;
+    _deltaWhileAutoScrolling =
+        _autoScrollingStartOffset! - _getScrollPosition!().pixels;
   }
 
   void _scrollUp(double distanceInGutter) {
     final scrollPosition = _getScrollPosition!();
     if (scrollPosition.pixels <= 0) {
-      editorScrollingLog.finest("Tried to scroll up but the scroll position is already at the top");
+      editorScrollingLog.finest(
+          "Tried to scroll up but the scroll position is already at the top");
       return;
     }
 
@@ -611,7 +663,8 @@ class AutoScrollController with ChangeNotifier {
     final scrollAmount = lerpDouble(0, _maxScrollSpeed, speedPercent)!;
 
     editorScrollingLog.finest("Speed percent: $speedPercent");
-    editorScrollingLog.finest("Jumping from ${scrollPosition.pixels} to ${scrollPosition.pixels + scrollAmount}");
+    editorScrollingLog.finest(
+        "Jumping from ${scrollPosition.pixels} to ${scrollPosition.pixels + scrollAmount}");
 
     scrollPosition.jumpTo(scrollPosition.pixels - scrollAmount);
   }
@@ -619,7 +672,8 @@ class AutoScrollController with ChangeNotifier {
   void _scrollDown(double distanceInGutter) {
     final scrollPosition = _getScrollPosition!();
     if (scrollPosition.pixels >= scrollPosition.maxScrollExtent) {
-      editorScrollingLog.finest("Tried to scroll down but the scroll position is already beyond the max");
+      editorScrollingLog.finest(
+          "Tried to scroll down but the scroll position is already beyond the max");
       return;
     }
 
@@ -629,7 +683,8 @@ class AutoScrollController with ChangeNotifier {
     final scrollAmount = lerpDouble(0, _maxScrollSpeed, speedPercent)!;
 
     editorScrollingLog.finest("Speed percent: $speedPercent");
-    editorScrollingLog.finest("Jumping from ${scrollPosition.pixels} to ${scrollPosition.pixels + scrollAmount}");
+    editorScrollingLog.finest(
+        "Jumping from ${scrollPosition.pixels} to ${scrollPosition.pixels + scrollAmount}");
 
     scrollPosition.jumpTo(scrollPosition.pixels + scrollAmount);
   }

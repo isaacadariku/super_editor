@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:super_editor/src/core/document_debug_paint.dart';
 import 'package:super_editor/src/default_editor/document_scrollable.dart';
@@ -23,6 +24,7 @@ class DocumentScaffold<ContextType> extends StatefulWidget {
     this.scrollController,
     required this.autoScrollController,
     required this.scroller,
+    this.isScribbleInProgress,
     required this.presenter,
     required this.componentBuilders,
     required this.shrinkWrap,
@@ -39,14 +41,17 @@ class DocumentScaffold<ContextType> extends StatefulWidget {
 
   /// Builder that creates a gesture interaction widget, which is displayed
   /// beneath the document, at the same size as the viewport.
-  final Widget Function(BuildContext context, {required Widget child}) gestureBuilder;
+  final Widget Function(BuildContext context, {required Widget child})
+      gestureBuilder;
 
   /// Builds the text input widget, if applicable. The text input system is placed
   /// above the gesture system and beneath viewport decoration.
-  final Widget Function(BuildContext context, {required Widget child})? textInputBuilder;
+  final Widget Function(BuildContext context, {required Widget child})?
+      textInputBuilder;
 
   /// Builds platform specific viewport decoration (such as toolbar overlay manager or magnifier overlay manager).
-  final Widget Function(BuildContext context, {required Widget child}) viewportDecorationBuilder;
+  final Widget Function(BuildContext context, {required Widget child})
+      viewportDecorationBuilder;
 
   /// Controls scrolling when this [DocumentScaffold] adds its own `Scrollable`, but
   /// doesn't provide scrolling control when this [DocumentScaffold] uses an ancestor
@@ -60,6 +65,11 @@ class DocumentScaffold<ContextType> extends StatefulWidget {
   /// that external actors, such as keyboard handlers, can query and change
   /// the scroll offset.
   final DocumentScroller? scroller;
+
+  /// A listenable that reports whether a Scribble or stylus writing interaction
+  /// is currently in progress. When active, scrolling is disabled to avoid
+  /// interfering with scribble input.
+  final ValueListenable<bool>? isScribbleInProgress;
 
   /// Presenter that computes styles for a single-column layout, e.g., component padding,
   /// text styles, selection.
@@ -117,6 +127,7 @@ class _DocumentScaffoldState extends State<DocumentScaffold> {
       scrollController: widget.scrollController,
       scrollingMinimapId: widget.debugPaint.scrollingMinimapId,
       scroller: widget.scroller,
+      isScribbleInProgress: widget.isScribbleInProgress,
       shrinkWrap: widget.shrinkWrap,
       showDebugPaint: widget.debugPaint.scrolling,
       child: child,

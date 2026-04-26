@@ -428,6 +428,7 @@ class AndroidDocumentTouchInteractor extends StatefulWidget {
     required this.getDocumentLayout,
     required this.selection,
     required this.isImeConnected,
+    this.isScribbleInProgress,
     this.openKeyboardWhenTappingExistingSelection = true,
     this.openKeyboardOnSelectionChange = true,
     required this.openSoftwareKeyboard,
@@ -454,6 +455,13 @@ class AndroidDocumentTouchInteractor extends StatefulWidget {
   /// This signal is used, for example, to decide whether we should show
   /// the popover toolbar on tap.
   final ValueListenable<bool> isImeConnected;
+
+  /// A listenable that reports whether a Scribble or stylus writing interaction
+  /// (e.g., Samsung S-Pen) is currently in progress.
+  ///
+  /// When scribble is in progress, gesture handling avoids interfering with
+  /// the IME's scribble input.
+  final ValueListenable<bool>? isScribbleInProgress;
 
   /// {@macro openKeyboardWhenTappingExistingSelection}
   final bool openKeyboardWhenTappingExistingSelection;
@@ -1318,6 +1326,11 @@ class _AndroidDocumentTouchInteractorState extends State<AndroidDocumentTouchInt
               (EagerPanGestureRecognizer instance) {
                 instance
                   ..shouldAccept = () {
+                    if (widget.isScribbleInProgress?.value == true) {
+                      // A Scribble/stylus writing interaction is in progress.
+                      // Don't accept the pan so the IME can handle scribble input.
+                      return false;
+                    }
                     if (_globalTapDownOffset == null) {
                       return false;
                     }

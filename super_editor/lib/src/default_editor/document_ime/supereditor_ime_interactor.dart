@@ -22,6 +22,7 @@ import '../document_hardware_keyboard/document_input_keyboard.dart';
 import 'document_delta_editing.dart';
 import 'document_ime_communication.dart';
 import 'document_ime_interaction_policies.dart';
+import 'document_serialization.dart';
 import 'ime_decoration.dart';
 import 'ime_keyboard_control.dart';
 
@@ -48,6 +49,7 @@ class SuperEditorImeInteractor extends StatefulWidget {
     this.imeConfiguration = const SuperEditorImeConfiguration(),
     this.imeOverrides,
     this.isImeConnected,
+    this.isScribbleInProgress,
     this.hardwareKeyboardActions = const [],
     required this.selectorHandlers,
     this.floatingCursorController,
@@ -122,6 +124,13 @@ class SuperEditorImeInteractor extends StatefulWidget {
   /// A `true` value means this interactor is connected to the platform's IME, a `false`
   /// value means this interactor isn't connected to the platforms IME.
   final ValueNotifier<bool>? isImeConnected;
+
+  /// An (optional) notifier that reports whether a Scribble (Apple Pencil handwriting)
+  /// or stylus writing interaction is currently in progress.
+  ///
+  /// This can be used by gesture interactors and scroll controllers to avoid
+  /// interfering with scribble input.
+  final ValueNotifier<bool>? isScribbleInProgress;
 
   /// All the actions that the user can execute with physical hardware
   /// keyboard keys.
@@ -265,6 +274,7 @@ class SuperEditorImeInteractorState extends State<SuperEditorImeInteractor> impl
     _registerInput(_myImeId);
     SuperIme.instance.addListener(_onSharedImeChange);
     _setupDocumentImeInputClient();
+    _documentImeClient.isScribbleInProgress.addListener(_onScribbleStateChange);
 
     _imeClient = DeltaTextInputClientDecorator();
     _configureImeClientDecorators();
@@ -371,9 +381,14 @@ class SuperEditorImeInteractorState extends State<SuperEditorImeInteractor> impl
       widget.imeOverrides?.client = null;
     }
     _imeClient.client = null;
+    _documentImeClient.isScribbleInProgress.removeListener(_onScribbleStateChange);
     _documentImeClient.dispose();
 
     super.dispose();
+  }
+
+  void _onScribbleStateChange() {
+    widget.isScribbleInProgress?.value = _documentImeClient.isScribbleInProgress.value;
   }
 
   @visibleForTesting
@@ -491,6 +506,7 @@ class SuperEditorImeInteractorState extends State<SuperEditorImeInteractor> impl
       _reportSizeAndTransformToIme();
       _reportCaretRectToIme();
       _reportTextStyleToIme();
+      _reportSelectionRectsToIme();
     }
 
     // There are some operations that might affect our transform, size and the caret rect,
@@ -596,6 +612,74 @@ class SuperEditorImeInteractorState extends State<SuperEditorImeInteractor> impl
           textDirection: selectedComponent.textDirection ?? TextDirection.ltr,
           textAlign: selectedComponent.textAlign ?? TextAlign.left,
         );
+  }
+
+  /// Report character bounding rects to the IME so that Scribble (Apple Pencil
+  /// handwriting) and similar stylus features can target the correct text positions.
+  void _reportSelectionRectsToIme() {
+    if (defaultTargetPlatform != TargetPlatform.iOS && defaultTargetPlatform != TargetPlatform.android) {
+      // Selection rects are only needed on mobile platforms for Scribble/stylus support.
+      return;
+    }
+
+    final selection = widget.editContext.composer.selection;
+    if (selection == null) {
+      return;
+    }
+
+    final docLayout = widget.editContext.documentLayout;
+    final renderSliver = context.findRenderObject() as RenderSliver;
+
+    // Build the same serialization that is sent to the IME so we can
+    // map document positions to IME text offsets.
+    final imeSerialization = DocumentImeSerializer(
+      widget.editContext.document,
+      selection,
+      widget.editContext.composer.composingRegion.value,
+    );
+
+    final selectionRects = <SelectionRect>[];
+
+    for (final entry in imeSerialization.docTextNodesToImeRanges.entries) {
+      final nodeId = entry.key;
+      final imeRange = entry.value;
+
+      final component = docLayout.getComponentByNodeId(nodeId);
+      if (component == null) {
+        continue;
+      }
+
+      final node = widget.editContext.document.getNodeById(nodeId);
+      if (node is! TextNode) {
+        // Non-text nodes are serialized as single characters. Report a single
+        // rect for them.
+        final componentBox = component.context.findRenderObject() as RenderBox;
+        final globalOffset = componentBox.localToGlobal(Offset.zero);
+        final localOffset = renderSliver.globalToLocal(globalOffset);
+        selectionRects.add(SelectionRect(
+          position: imeRange.start,
+          bounds: localOffset & componentBox.size,
+        ));
+        continue;
+      }
+
+      // For text nodes, report a rect for each character.
+      final textLength = node.text.length;
+      for (int charIndex = 0; charIndex < textLength; charIndex++) {
+        final charRect = component.getRectForPosition(TextNodePosition(offset: charIndex));
+        final globalOffset = docLayout.getGlobalOffsetFromDocumentOffset(charRect.topLeft);
+        final localOffset = renderSliver.globalToLocal(globalOffset);
+
+        selectionRects.add(SelectionRect(
+          position: imeRange.start + charIndex,
+          bounds: localOffset & charRect.size,
+        ));
+      }
+    }
+
+    if (selectionRects.isNotEmpty) {
+      SuperIme.instance.getImeConnectionForOwner(_myImeId)!.setSelectionRects(selectionRects);
+    }
   }
 
   /// Compute the caret rect in the editor's content space.

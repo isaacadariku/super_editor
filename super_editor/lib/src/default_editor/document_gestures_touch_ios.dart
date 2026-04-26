@@ -267,6 +267,7 @@ class IosDocumentTouchInteractor extends StatefulWidget {
     required this.getDocumentLayout,
     required this.selection,
     required this.isImeConnected,
+    this.isScribbleInProgress,
     this.openKeyboardWhenTappingExistingSelection = true,
     this.openKeyboardOnSelectionChange = true,
     required this.openSoftwareKeyboard,
@@ -293,6 +294,13 @@ class IosDocumentTouchInteractor extends StatefulWidget {
   /// This signal is used to, for example, to decide whether we should show
   /// the popover toolbar on tap.
   final ValueListenable<bool> isImeConnected;
+
+  /// A listenable that reports whether a Scribble (Apple Pencil handwriting)
+  /// or stylus writing interaction is currently in progress.
+  ///
+  /// When scribble is in progress, gesture handling avoids interfering with
+  /// the IME's scribble input.
+  final ValueListenable<bool>? isScribbleInProgress;
 
   /// {@macro openKeyboardWhenTappingExistingSelection}
   final bool openKeyboardWhenTappingExistingSelection;
@@ -1467,6 +1475,11 @@ class _IosDocumentTouchInteractorState extends State<IosDocumentTouchInteractor>
               (EagerPanGestureRecognizer instance) {
                 instance
                   ..shouldAccept = () {
+                    if (widget.isScribbleInProgress?.value == true) {
+                      // A Scribble/stylus writing interaction is in progress.
+                      // Don't accept the pan so the IME can handle scribble input.
+                      return false;
+                    }
                     if (_globalTapDownOffset == null) {
                       return false;
                     }

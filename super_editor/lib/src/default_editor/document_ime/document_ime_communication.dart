@@ -68,6 +68,14 @@ class DocumentImeInputClient extends TextInputConnectionDecorator with TextInput
   // TODO: get floating cursor out of here. Use a multi-client IME decorator to split responsibilities
   late FloatingCursorController? floatingCursorController;
 
+  /// Whether a Scribble (Apple Pencil handwriting) or stylus writing interaction
+  /// is currently in progress.
+  ///
+  /// This value is updated when the platform calls [insertTextPlaceholder] (start)
+  /// and [removeTextPlaceholder] (end).
+  ValueListenable<bool> get isScribbleInProgress => _isScribbleInProgress;
+  final ValueNotifier<bool> _isScribbleInProgress = ValueNotifier<bool>(false);
+
   /// Whether the floating cursor is being displayed.
   ///
   /// This value is updated on [updateFloatingCursor].
@@ -279,6 +287,18 @@ class DocumentImeInputClient extends TextInputConnectionDecorator with TextInput
     editorImeLog.fine("[DocumentImeInputClient] - Done sending document to IME");
 
     _isSendingToIme = false;
+  }
+
+  @override
+  void insertTextPlaceholder(Size size) {
+    editorImeLog.fine("[DocumentImeInputClient] - Scribble: insertTextPlaceholder($size)");
+    _isScribbleInProgress.value = true;
+  }
+
+  @override
+  void removeTextPlaceholder() {
+    editorImeLog.fine("[DocumentImeInputClient] - Scribble: removeTextPlaceholder");
+    _isScribbleInProgress.value = false;
   }
 
   @override

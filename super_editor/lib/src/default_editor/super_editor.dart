@@ -453,6 +453,7 @@ class SuperEditorState extends State<SuperEditor> {
   late SoftwareKeyboardController _softwareKeyboardController;
 
   late ValueNotifier<bool> _isImeConnected;
+  final ValueNotifier<bool> _isScribbleInProgress = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -750,6 +751,7 @@ class SuperEditorState extends State<SuperEditor> {
               scrollController: _scrollController,
               autoScrollController: _autoScrollController,
               scroller: _scroller,
+              isScribbleInProgress: _isScribbleInProgress,
               presenter: presenter,
               componentBuilders: widget.componentBuilders,
               shrinkWrap: widget.shrinkWrap,
@@ -859,6 +861,7 @@ class SuperEditorState extends State<SuperEditor> {
           ],
           selectorHandlers: widget.selectorHandlers ?? defaultEditorSelectorHandlers,
           isImeConnected: _isImeConnected,
+          isScribbleInProgress: _isScribbleInProgress,
           log: widget.log?.imeDeltas,
           child: child,
         );
@@ -968,6 +971,7 @@ class SuperEditorState extends State<SuperEditor> {
           getDocumentLayout: () => editContext.documentLayout,
           selection: editContext.composer.selectionNotifier,
           isImeConnected: _isImeConnected,
+          isScribbleInProgress: _isScribbleInProgress,
           openKeyboardWhenTappingExistingSelection: widget.selectionPolicies.openKeyboardWhenTappingExistingSelection,
           openKeyboardOnSelectionChange: widget.imePolicies.openKeyboardOnSelectionChange,
           openSoftwareKeyboard: _openSoftwareKeyboard,
@@ -990,6 +994,7 @@ class SuperEditorState extends State<SuperEditor> {
           getDocumentLayout: () => editContext.documentLayout,
           selection: editContext.composer.selectionNotifier,
           isImeConnected: _isImeConnected,
+          isScribbleInProgress: _isScribbleInProgress,
           openKeyboardWhenTappingExistingSelection: widget.selectionPolicies.openKeyboardWhenTappingExistingSelection,
           openKeyboardOnSelectionChange: widget.imePolicies.openKeyboardOnSelectionChange,
           openSoftwareKeyboard: _openSoftwareKeyboard,
